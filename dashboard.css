@@ -1,19 +1,32 @@
+/* --- TEMA & VARIABEL WARNA SAK-KU --- */
 :root {
-    --primary-color: #9C27B0;
+    /* Warna Utama dari Kotlin App */
+    --primary-color: #9C27B0; /* PurplePrimary */
+    --secondary-color: #FF80AB; /* SoftPink (Untuk gradient di halaman login) */
     --text-on-primary: #FFFFFF;
+
+    /* Light Theme (Mengikuti background pinkish/warm white) */
     --bg-color: #F8F4F6;
     --surface-color: #FFFFFF;
     --text-primary: #333333;
     --text-secondary: #777777;
+    
+    /* Warna elemen form & menu */
+    --input-bg: #EEEEEE;
     --menu-icon-bg: #EEDDF5;
-    --border-color: #EEEEEE;
+    --border-color: #DDDDDD;
 }
 
+/* Class untuk Dark Mode */
 body.dark-mode {
-    --bg-color: #0F101C; /* Dark navy/purple seperti di gambar */
+    /* Dark Theme (Mengikuti background dark navy/purple) */
+    --bg-color: #0F101C;
     --surface-color: #1A1A2E; 
     --text-primary: #FFFFFF;
     --text-secondary: #AAAAAA;
+    
+    /* Warna elemen form & menu */
+    --input-bg: #2A1F3D;
     --menu-icon-bg: #2A1F3D;
     --border-color: #2D2D42;
 }
@@ -31,10 +44,15 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* --- NAVBAR ATAS --- */
 .top-navbar {
-    background-color: var(--primary-color);
+    /* Hapus baris background-color: var(--primary-color); lalu ganti dengan 3 baris di bawah ini: */
+    background: var(--primary-color);
+    background: -webkit-linear-gradient(to right, var(--secondary-color), var(--primary-color));
+    background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+    
     color: var(--text-on-primary);
-    padding: 15px 20px; /* Dibuat tidak terlalu tebal */
+    padding: 15px 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     position: sticky;
     top: 0;
@@ -95,11 +113,17 @@ body {
 }
 
 .balance-card {
-    background-color: var(--primary-color);
+    /* Hapus baris background-color: var(--primary-color); lalu ganti dengan 3 baris di bawah ini: */
+    background: var(--primary-color);
+    background: -webkit-linear-gradient(to bottom right, var(--secondary-color), var(--primary-color));
+    background: linear-gradient(to bottom right, var(--secondary-color), var(--primary-color));
+    
     color: var(--text-on-primary);
     display: flex;
     flex-direction: column;
     justify-content: center;
+    /* Tambahan efek bayangan (glow) ungu yang tipis agar lebih mewah */
+    box-shadow: 0 8px 15px rgba(156, 39, 176, 0.2); 
 }
 
 .balance-card p {
