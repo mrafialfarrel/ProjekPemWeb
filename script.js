@@ -75,15 +75,30 @@ prefersDarkScheme.addEventListener('change', (e) => {
 // --- 3. Logika Navigasi Ke Dashboard
  const btnSubmitSignIn = document.getElementById('btnSubmitSignIn');
  const btnSubmitSignUp = document.getElementById('btnSubmitSignUp');
+ 
+ const loginEmail = document.getElementById('loginEmail');
+ const loginPassword = document.getElementById('loginPassword');
+
+ const regName = document.getElementById('regName');
+ const regEmail = document.getElementById('regEmail');
+ const regPassword = document.getElementById('regPassword');
 
  btnSubmitSignIn.addEventListener('click', (e) => {
     e.preventDefault();
 
-    window.location.href = 'Dashboard.html';
+    if (loginEmail.value.trim() === '' || loginPassword.value.trim() === ''){
+        alert('Ups! Email dan password akun kamu tidak boleh kosong.');
+    } else {
+        window.location.href = 'Dashboard.html';
+    }
  });
 
  btnSubmitSignUp.addEventListener('click', (e) => {
     e.preventDefault();
 
-    window.location = 'Dashboard.html';
+    if (regName.value.trim() === '' || regEmail.value.trim() === '' || regPassword.value.trim() === ''){
+        alert('Mohon lengkapi Nama, Email, dan Password untuk mulai mencatat keuanganmu');
+    } else {
+        window.location = 'Dashboard.html';
+    }
  });
