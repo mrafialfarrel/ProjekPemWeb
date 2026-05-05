@@ -71,3 +71,19 @@ prefersDarkScheme.addEventListener('change', (e) => {
         updateToggleButton();
     }
 });
+
+// --- 3. Logika Navigasi Ke Dashboard
+ const btnSubmitSignIn = document.getElementById('btnSubmitSignIn');
+ const btnSubmitSignUp = document.getElementById('btnSubmitSignUp');
+
+ btnSubmitSignIn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    window.location.href = 'Dashboard.html';
+ });
+
+ btnSubmitSignUp.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    window.location = 'Dashboard.html';
+ });
