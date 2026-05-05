@@ -4,9 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ini Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-    <h1>INI DASHBOARD</h1>
+    <header class="top-navbar">
+        <div class="nav-content">
+            <h1>Dashboard Keuangan</h1>
+            <div class="nav-actions">
+                <button class="icon-btn" id="themeToggle">🌙</button>
+                <button class="icon-btn">Notifikasi</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <section class="summary-section">
+            <div class="card balance-card">
+                <p>Total Saldo Anda</p>
+                <h2>Rp 0</h2>
+            </div>
+
+            <div class="cashflow-cards">
+                <div class="card stat-card">
+                    <div class="stat-header">
+                        <span class="icon-income">|</span> Pemasukan
+                    </div>
+                    <h3>Rp 0</h3>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-header">
+                        <span class="icon-expense">|</span> Pengeluaran
+                    </div>
+                    <h3>Rp 0</h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="menu-section">
+            <button class="menu-btn" onclick="window.location.href='#'">
+                <div class="menu-icon">*</div>
+                <span>Kantong</span>
+            </button>
+            <button class="menu-btn" onclick="window.location.href='#'">
+                <div class="menu-icon">*</div>
+                <span>Laporan</span>
+            </button>
+        </section>
+
+        <section class="transaction-section">
+            <h3>Transaksi Terakhir</h3>
+            <div class="transaction-list">
+                <div class="transaction-item">
+                    <span class="trx-name">Belum ada Transaksi</span>
+                    <span class="trx-amount muted">- Rp 0</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="dashboard.js"></script>
     <a href="loginPage.html">LogOut</a>
 </body>
 </html>
