@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifikasi</title>
+    <link rel="stylesheet" href="notifikasi.css">
+</head>
+<body>
+    <header class="top-navbar">
+        <div class="nav-content">
+            <button class="icon-btn" onclick="window.location.href='Dashboard.html'">Back</button>
+            <h1>Notifikasi</h1>
+            <button class="icon-btn" id="themeToggle">🌙</button>
+        </div>
+    </header>
+
+    <main class="notif-container">
+        <div class="notif-item unread">
+            <div class="notif-icon danger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <div class="notif-content">
+                <h4>Peringatan Kantong</h4>
+                <p>Pengeluaran untuk "Makan Siang" sudah mendekati batas budget bulan ini.</p>
+                <span class="notfi-time">10 menit yang lalu</span>
+            </div>
+        </div>
+
+        <div class="notif-item unread">
+            <div class="notif-icon success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <div class="notif-content">
+                <h4>Pemasukan Tercatat</h4>
+                <p>Gaji bulanan sebesar Rp 5.000.000 berhasil ditambahkan ke total saldo Anda.</p>
+                <span class="notif-time">2 jam yang lalu</span>
+            </div>
+        </div>
+        <div class="notif-item">
+            <div class="notif-icon info">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <div class="notif-content">
+                <h4>Fitur Laporan Baru</h4>
+                <p>Cek ringkasan pengeluaran mingguanmu sekarang dengan grafik yang lebih detail.</p>
+                <span class="notif-time">Kemarin</span>
+            </div>
+        </div>
+    </main>
+
+    <script src="notifikasi.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+/* --- TEMA & VARIABEL WARNA SAK-KU --- */
+:root {
+    --primary-color: #9C27B0; 
+    --secondary-color: #FF80AB; 
+    --text-on-primary: #FFFFFF;
+
+    /* Light Theme */
+    --bg-color: #F8F4F6;
+    --surface-color: #FFFFFF;
+    --text-primary: #333333;
+    --text-secondary: #777777;
+    --border-color: #DDDDDD;
+    --unread-bg: #FDF4FA; /* Warna background tipis untuk notif belum dibaca */
+}
+
+/* Dark Theme */
+body.dark-mode {
+    --bg-color: #0F101C;
+    --surface-color: #1A1A2E; 
+    --text-primary: #FFFFFF;
+    --text-secondary: #AAAAAA;
+    --border-color: #2D2D42;
+    --unread-bg: #221B3A; 
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Arial', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- NAVBAR ATAS --- */
+.top-navbar {
+    background: var(--primary-color);
+    background: -webkit-linear-gradient(to right, var(--secondary-color), var(--primary-color));
+    background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+    color: var(--text-on-primary);
+    padding: 15px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-content h1 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1);
+}
+
+/* --- DAFTAR NOTIFIKASI --- */
+.notif-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notif-item {
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+.notif-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* Penanda Notifikasi Belum Dibaca */
+.notif-item.unread {
+    background-color: var(--unread-bg);
+    border-left: 4px solid var(--primary-color);
+}
+
+/* --- STYLING IKON --- */
+.notif-icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0; /* Mencegah ikon mengecil saat teks panjang */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.notif-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Warna Spesifik Tiap Ikon */
+.danger {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: #F44336; /* Merah */
+}
+
+.success {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: #4CAF50; /* Hijau */
+}
+
+.info {
+    background-color: rgba(33, 150, 243, 0.1);
+    color: #2196F3; /* Biru */
+}
+
+/* --- TEKS KONTEN --- */
+.notif-content h4 {
+    font-size: 15px;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.notif-content p {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.notif-time {
+    font-size: 11px;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
