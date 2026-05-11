@@ -6,7 +6,7 @@ function updateToggleButton() {
     } else {
         themeToggle.innerHTML = '<i data-feather="moon"></i>';
     }
-    feather.replace(); // Render ulang ikon
+    feather.replace(); 
 }
 
 const savedTheme = localStorage.getItem("sakku-theme");
@@ -31,16 +31,12 @@ themeToggle.addEventListener('click', () => {
     updateToggleButton();
 });
 
-// --- LOGIKA LOG OUT ---
 const btnLogout = document.getElementById('btnLogout');
 
 btnLogout.addEventListener('click', () => {
-    // Menampilkan pesan konfirmasi (opsional tapi disarankan)
     const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari aplikasi sak-ku?");
     
     if (konfirmasi) {
-        // Jika user klik "OK", arahkan kembali ke halaman Login
-        // Sesuaikan nama file ini jika kamu menggunakan index.html
         window.location.href = 'LoginPage.html'; 
     }
 });
