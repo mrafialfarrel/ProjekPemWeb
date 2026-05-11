@@ -17,10 +17,14 @@ btnGoSignUp.addEventListener('click', () => {
 // Fungsi untuk memperbarui teks/ikon pada tombol
 function updateToggleButton() {
     if (document.body.classList.contains('dark-mode')) {
-        themeToggle.textContent = '☀️ Light Mode';
+        // Mode Gelap -> Tombol beralih ke opsi Light Mode
+        themeToggle.innerHTML = '<i data-feather="sun" width="16" height="16"></i> Light Mode';
     } else {
-        themeToggle.textContent = '🌙 Dark Mode';
+        // Mode Terang -> Tombol beralih ke opsi Dark Mode
+        themeToggle.innerHTML = '<i data-feather="moon" width="16" height="16"></i> Dark Mode';
     }
+    // Wajib dipanggil untuk mengubah tag <i> menjadi SVG ikon
+    feather.replace();
 }
 
 // Mengecek apakah ada preferensi yang sudah disimpan sebelumnya (oleh tombol)
@@ -102,3 +106,25 @@ prefersDarkScheme.addEventListener('change', (e) => {
         window.location = 'Dashboard.html';
     }
  });
+
+ // --- 4. LOGIKA TOMBOL ENTER ---
+
+// Membuat fungsi pembantu (helper function) agar kode lebih rapi
+function triggerSubmitOnEnter(inputElement, buttonElement) {
+    inputElement.addEventListener('keypress', function(event) {
+        // Mengecek apakah tombol yang ditekan adalah "Enter"
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Mencegah form me-refresh halaman secara default
+            buttonElement.click();  // Memerintahkan JavaScript untuk meng-klik tombol
+        }
+    });
+}
+
+// Menerapkan fitur Enter untuk kolom-kolom di form SIGN IN
+triggerSubmitOnEnter(loginEmail, btnSubmitSignIn);
+triggerSubmitOnEnter(loginPassword, btnSubmitSignIn);
+
+// Menerapkan fitur Enter untuk kolom-kolom di form SIGN UP
+triggerSubmitOnEnter(regName, btnSubmitSignUp);
+triggerSubmitOnEnter(regEmail, btnSubmitSignUp);
+triggerSubmitOnEnter(regPassword, btnSubmitSignUp);

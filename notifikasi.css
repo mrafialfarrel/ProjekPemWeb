@@ -62,6 +62,12 @@ body {
     font-weight: bold;
 }
 
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Jarak antara tombol tema dan log out */
+}
+
 .icon-btn {
     background: transparent;
     border: none;
