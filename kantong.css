@@ -1,0 +1,145 @@
+/* --- TEMA & VARIABEL WARNA SAK-KU --- */
+:root {
+    --primary-color: #9C27B0; 
+    --secondary-color: #FF80AB; 
+    --text-on-primary: #FFFFFF;
+
+    /* Light Theme */
+    --bg-color: #F8F4F6;
+    --surface-color: #FFFFFF;
+    --text-primary: #333333;
+    --text-secondary: #777777;
+    --border-color: #DDDDDD;
+    --progress-bg: #EEEEEE;
+}
+
+/* Dark Theme */
+body.dark-mode {
+    --bg-color: #0F101C;
+    --surface-color: #1A1A2E; 
+    --text-primary: #FFFFFF;
+    --text-secondary: #AAAAAA;
+    --border-color: #2D2D42;
+    --progress-bg: #2A1F3D;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Arial', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding-bottom: 80px; /* Ruang ekstra di bawah agar konten tidak tertutup FAB */
+}
+
+/* --- NAVBAR ATAS --- */
+.top-navbar {
+    background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+    color: var(--text-on-primary);
+    padding: 15px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.nav-content { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.nav-content h1 { font-size: 18px; font-weight: bold; }
+.icon-btn { background: transparent; border: none; color: inherit; font-size: 20px; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; }
+.icon-btn:hover { transform: scale(1.1); }
+
+/* --- KONTEN UTAMA --- */
+.kantong-container { max-width: 800px; margin: 20px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 30px; }
+
+.balance-card {
+    background: linear-gradient(to bottom right, var(--secondary-color), var(--primary-color));
+    color: var(--text-on-primary);
+    border-radius: 15px; padding: 25px 20px;
+    box-shadow: 0 8px 15px rgba(156, 39, 176, 0.2); 
+    display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+}
+.balance-card p { font-size: 14px; margin-bottom: 8px; opacity: 0.9; }
+.balance-card h2 { font-size: 32px; font-weight: bold; }
+
+.section-header { margin-bottom: 12px; }
+.section-header h3 { font-size: 16px; color: var(--text-primary); }
+
+/* --- KARTU KANTONG & TABUNGAN --- */
+.pocket-item, .savings-item {
+    background-color: var(--surface-color); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02); border: 1px solid var(--border-color);
+}
+.pocket-item { align-items: center; gap: 15px; }
+.savings-item { flex-direction: column; }
+.savings-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+
+.pocket-number { font-size: 18px; font-weight: bold; color: var(--text-secondary); width: 30px; flex-shrink: 0; display: flex; justify-content: center; }
+.pocket-info { flex-grow: 1; }
+.pocket-info h4 { font-size: 15px; color: var(--text-primary); margin-bottom: 4px; }
+.pocket-info p { font-size: 12px; color: var(--text-secondary); }
+.pocket-balance h4 { font-size: 15px; color: var(--text-primary); font-weight: bold; }
+
+.goal-area { border-top: 1px dashed var(--border-color); padding-top: 12px; }
+.goal-stats { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; }
+.goal-stats strong { color: var(--primary-color); font-weight: bold; }
+.progress-track { background-color: var(--progress-bg); border-radius: 10px; height: 8px; overflow: hidden; width: 100%; }
+.progress-fill { background: linear-gradient(to right, var(--secondary-color), var(--primary-color)); height: 100%; border-radius: 10px; }
+
+/* --- TOMBOL AKSI PER SEKSI --- */
+.section-action-btn {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 5px;
+}
+.section-action-btn:hover { background-color: var(--border-color); }
+
+/* --- FAB (FLOATING ACTION BUTTON) --- */
+.fab-container { position: fixed; bottom: 30px; right: 30px; z-index: 990; display: flex; flex-direction: column; align-items: flex-end; }
+.fab-btn {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(to bottom right, var(--secondary-color), var(--primary-color));
+    color: white; border: none; box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
+    display: flex; justify-content: center; align-items: center; cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.fab-btn:hover { transform: scale(1.05); }
+.fab-btn.active { transform: rotate(45deg); /* Berubah jadi tanda silang (X) saat diklik */ }
+
+/* --- FAB MENU POPUP --- */
+.fab-menu { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; opacity: 0; transform: translateY(20px); pointer-events: none; transition: all 0.3s ease; align-items: flex-end; }
+.fab-menu.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.fab-item {
+    background-color: var(--surface-color); color: var(--text-primary); border: 1px solid var(--border-color);
+    padding: 10px 16px; border-radius: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer;
+    display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: bold; transition: background-color 0.2s;
+}
+.fab-item:hover { background-color: var(--border-color); }
+.fab-icon-wrapper { background-color: rgba(156, 39, 176, 0.1); color: var(--primary-color); border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; }
+
+/* --- BOTTOM SHEET --- */
+.bottom-sheet-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.bottom-sheet-overlay.show { opacity: 1; pointer-events: auto; }
+.bottom-sheet {
+    position: fixed; bottom: -100%; left: 0; right: 0; background-color: var(--surface-color); z-index: 1001;
+    border-radius: 20px 20px 0 0; padding: 20px; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); /* Efek memantul sedikit */
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto;
+}
+.bottom-sheet.show { bottom: 0; }
+.sheet-drag-handle { width: 40px; height: 5px; background-color: var(--border-color); border-radius: 5px; margin: 0 auto 15px; }
+.sheet-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; }
+.sheet-header h3 { font-size: 18px; color: var(--text-primary); }
+.close-sheet-btn { color: var(--text-secondary); }
+
+/* Tombol Simpan di Bottom Sheet */
+.save-btn {
+    width: 100%; padding: 15px; border-radius: 12px; background: var(--primary-color); color: white;
+    border: none; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px;
+}

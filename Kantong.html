@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kantong | sak-ku</title>
+    <link rel="stylesheet" href="kantong.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+    <header class="top-navbar">
+        <div class="nav-content">
+            <button class="icon-btn" onclick="window.location.href='Dashboard.html'">
+                <i data-feather="arrow-left"></i>
+            </button>
+            <h1>Kantong Saya</h1>
+            <div class="nav-actions">
+                <button class="icon-btn" id="themeToggle"></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="kantong-container">
+        
+        <section class="total-section">
+            <div class="card balance-card">
+                <p>Total Kekayaan</p>
+                <h2>Rp 2.050.000</h2>
+            </div>
+        </section>
+
+        <section class="pocket-list">
+            <div class="section-header">
+                <h3>Kantong</h3>
+            </div>
+            
+            <div class="pocket-item">
+                <div class="pocket-number">01</div>
+                <div class="pocket-info">
+                    <h4>Dompet Tunai</h4>
+                    <p>Uang Fisik</p>
+                </div>
+                <div class="pocket-balance">
+                    <h4>Rp 250.000</h4>
+                </div>
+            </div>
+
+            <div class="pocket-item">
+                <div class="pocket-number">02</div>
+                <div class="pocket-info">
+                    <h4>GoPay</h4>
+                    <p>e-Wallet</p>
+                </div>
+                <div class="pocket-balance">
+                    <h4>Rp 300.000</h4>
+                </div>
+            </div>
+
+            <button class="section-action-btn" onclick="openBottomSheet('Kantong')">
+                Tambah / Edit Kantong
+            </button>
+        </section>
+
+        <section class="savings-list">
+            <div class="section-header">
+                <h3>Tabungan</h3>
+            </div>
+
+            <div class="savings-item">
+                <div class="savings-header">
+                    <div class="pocket-number">01</div>
+                    <div class="pocket-info">
+                        <h4>Tabungan Beli Laptop</h4>
+                        <p>Rekening Bank</p>
+                    </div>
+                </div>
+                <div class="goal-area">
+                    <div class="goal-stats">
+                        <span>Terkumpul: <strong>Rp 1.000.000</strong></span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: 10%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="savings-item">
+                <div class="savings-header">
+                    <div class="pocket-number">02</div>
+                    <div class="pocket-info">
+                        <h4>Modal Investasi Saham</h4>
+                        <p>Rekening Dana Nasabah (RDN)</p>
+                    </div>
+                </div>
+                <div class="goal-area">
+                    <div class="goal-stats">
+                        <span>Terkumpul: <strong>Rp 500.000</strong></span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: 10%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="section-action-btn" onclick="openBottomSheet('Tabungan')">
+                Tambah / Edit Tabungan
+            </button>
+        </section>
+
+    </main>
+
+    <div class="fab-container">
+        <div class="fab-menu" id="fabMenu">
+            <div class="fab-item" onclick="openBottomSheet('Transaksi')">
+                <span>Tambah Transaksi</span>
+                <div class="fab-icon-wrapper"><i data-feather="repeat" width="16" height="16"></i></div>
+            </div>
+            <div class="fab-item" onclick="openBottomSheet('Kantong')">
+                <span>Tambah Kantong</span>
+                <div class="fab-icon-wrapper"><i data-feather="pocket" width="16" height="16"></i></div>
+            </div>
+            <div class="fab-item" onclick="openBottomSheet('Tabungan')">
+                <span>Tambah Tabungan</span>
+                <div class="fab-icon-wrapper"><i data-feather="target" width="16" height="16"></i></div>
+            </div>
+        </div>
+        <button class="fab-btn" id="fabBtn">
+            <i data-feather="plus"></i>
+        </button>
+    </div>
+
+    <div class="bottom-sheet-overlay" id="bottomSheetOverlay" onclick="closeBottomSheet()"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+        <div class="sheet-drag-handle"></div>
+        <div class="sheet-header">
+            <h3 id="sheetTitle">Pengaturan</h3>
+            <button class="icon-btn close-sheet-btn" onclick="closeBottomSheet()">
+                <i data-feather="x" width="20" height="20"></i>
+            </button>
+        </div>
+        <div class="sheet-content">
+            <p style="color: var(--text-secondary); text-align: center; margin: 20px 0;">
+                Formulir untuk mengatur <strong id="sheetTypeName" style="color: var(--primary-color);"></strong> akan muncul di sini.
+            </p>
+            <button class="save-btn" onclick="closeBottomSheet()">Simpan Perubahan</button>
+        </div>
+    </div>
+
+    <script src="kantong.js"></script>
+</body>
+</html>
