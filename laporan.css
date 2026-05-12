@@ -1,0 +1,148 @@
+/* --- TEMA & VARIABEL WARNA SAK-KU --- */
+:root {
+    --primary-color: #9C27B0; 
+    --secondary-color: #FF80AB; 
+    --text-on-primary: #FFFFFF;
+
+    --bg-color: #F8F4F6;
+    --surface-color: #FFFFFF;
+    --text-primary: #333333;
+    --text-secondary: #777777;
+    --border-color: #DDDDDD;
+    --progress-bg: #EEEEEE;
+    
+    --income-color: #4CAF50;
+    --income-bg: rgba(76, 175, 80, 0.1);
+    --expense-color: #F44336;
+    --expense-bg: rgba(244, 67, 54, 0.1);
+}
+
+body.dark-mode {
+    --bg-color: #0F101C;
+    --surface-color: #1A1A2E; 
+    --text-primary: #FFFFFF;
+    --text-secondary: #AAAAAA;
+    --border-color: #2D2D42;
+    --progress-bg: #2A1F3D;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Arial', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding-bottom: 40px; 
+}
+
+/* --- NAVBAR --- */
+.top-navbar {
+    background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+    color: var(--text-on-primary);
+    padding: 15px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky; top: 0; z-index: 100;
+}
+.nav-content { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.nav-content h1 { font-size: 18px; font-weight: bold; }
+.icon-btn { background: transparent; border: none; color: inherit; font-size: 20px; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; }
+
+/* --- KONTEN UTAMA --- */
+.laporan-container { max-width: 800px; margin: 20px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 20px; }
+
+/* --- ACTION BAR (Tombol Unduh & Filter Waktu) --- */
+.action-bar {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.download-btn {
+    background-color: var(--surface-color); color: var(--primary-color);
+    border: 1px solid var(--border-color); border-radius: 8px;
+    padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer;
+    display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.2s ease;
+}
+.download-btn:hover { background-color: rgba(156, 39, 176, 0.05); border-color: var(--primary-color); }
+
+.time-filter {
+    display: flex; background-color: var(--surface-color); border-radius: 8px; padding: 4px;
+    border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.filter-btn {
+    background: transparent; border: none; color: var(--text-secondary);
+    padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer;
+    transition: all 0.2s ease;
+}
+.filter-btn.active {
+    background-color: var(--primary-color); color: var(--text-on-primary);
+}
+
+/* --- KARTU GRAFIK --- */
+.chart-card {
+    background-color: var(--surface-color); border-radius: 12px; padding: 15px;
+    border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    width: 100%; height: 250px; position: relative;
+}
+
+/* --- RINGKASAN PEMASUKAN & PENGELUARAN --- */
+.summary-cards { display: flex; gap: 15px; }
+.summary-box {
+    flex: 1; background-color: var(--surface-color); border-radius: 12px; padding: 16px;
+    border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    display: flex; align-items: center; gap: 12px;
+}
+.sum-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+.sum-text p { font-size: 12px; color: var(--text-secondary); margin-bottom: 2px; }
+.sum-text h4 { font-size: 16px; font-weight: bold; color: var(--text-primary); }
+
+.income-box .sum-icon { background-color: var(--income-bg); color: var(--income-color); }
+.expense-box .sum-icon { background-color: var(--expense-bg); color: var(--expense-color); }
+
+/* --- KATEGORI PENGELUARAN --- */
+.category-section h3 { font-size: 16px; margin-bottom: 12px; color: var(--text-primary); }
+.category-item {
+    background-color: var(--surface-color); border-radius: 12px; padding: 16px; margin-bottom: 10px;
+    border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.cat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.cat-title { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: bold; color: var(--text-primary); }
+.cat-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; justify-content: center; align-items: center; }
+.cat-icon i { width: 16px; height: 16px; }
+.cat-amount { font-size: 14px; font-weight: bold; color: var(--text-primary); }
+
+.cat-progress { background-color: var(--progress-bg); border-radius: 6px; height: 6px; overflow: hidden; width: 100%; }
+.cat-fill { height: 100%; border-radius: 6px; }
+
+/* --- BOTTOM SHEET UNDUH --- */
+.bottom-sheet-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.bottom-sheet-overlay.show { opacity: 1; pointer-events: auto; }
+.bottom-sheet {
+    position: fixed; bottom: -100%; left: 0; right: 0; background-color: var(--surface-color); z-index: 1001;
+    border-radius: 20px 20px 0 0; padding: 20px; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); 
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto;
+}
+.bottom-sheet.show { bottom: 0; }
+.sheet-drag-handle { width: 40px; height: 5px; background-color: var(--border-color); border-radius: 5px; margin: 0 auto 15px; }
+.sheet-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; }
+.sheet-header h3 { font-size: 18px; color: var(--text-primary); }
+
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; font-size: 13px; font-weight: bold; color: var(--text-secondary); margin-bottom: 6px; }
+.form-input {
+    width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 10px;
+    background-color: var(--bg-color); color: var(--text-primary); font-family: inherit; font-size: 14px;
+}
+.form-input:focus { outline: none; border-color: var(--primary-color); }
+.save-btn {
+    width: 100%; padding: 15px; border-radius: 12px; background: var(--primary-color); color: white; display: flex; justify-content: center; align-items: center;
+    border: none; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.save-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+/* Responsif untuk layar kecil */
+@media (max-width: 450px) {
+    .summary-cards { flex-direction: column; }
+    .action-bar { flex-direction: column-reverse; align-items: flex-start; }
+    .time-filter { width: 100%; display: flex; }
+    .filter-btn { flex: 1; }
+}

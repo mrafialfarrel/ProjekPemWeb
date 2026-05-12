@@ -34,7 +34,7 @@
                 <h3>Kantong</h3>
             </div>
             
-            <div class="pocket-item">
+            <div class="pocket-item" onclick="openDetailSheet('Dompet Tunai', '250000')">
                 <div class="pocket-number">01</div>
                 <div class="pocket-info">
                     <h4>Dompet Tunai</h4>
@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <div class="pocket-item">
+            <div class="pocket-item" onclick="openDetailSheet('GoPay', '300000')">
                 <div class="pocket-number">02</div>
                 <div class="pocket-info">
                     <h4>GoPay</h4>
@@ -57,7 +57,7 @@
             </div>
 
             <button class="section-action-btn" onclick="openBottomSheet('Kantong')">
-                Tambah / Edit Kantong
+                <i data-feather="plus" width="16" height="16" style="margin-right: 5px;"></i> Tambah Kantong Baru
             </button>
         </section>
 
@@ -66,7 +66,7 @@
                 <h3>Tabungan</h3>
             </div>
 
-            <div class="savings-item">
+            <div class="savings-item" onclick="openDetailSheet('Tabungan Beli Laptop', '1000000')">
                 <div class="savings-header">
                     <div class="pocket-number">01</div>
                     <div class="pocket-info">
@@ -84,7 +84,7 @@
                 </div>
             </div>
 
-            <div class="savings-item">
+            <div class="savings-item" onclick="openDetailSheet('Modal Investasi Saham', '500000')">
                 <div class="savings-header">
                     <div class="pocket-number">02</div>
                     <div class="pocket-info">
@@ -103,28 +103,14 @@
             </div>
 
             <button class="section-action-btn" onclick="openBottomSheet('Tabungan')">
-                Tambah / Edit Tabungan
+                <i data-feather="plus" width="16" height="16" style="margin-right: 5px;"></i> Tambah Tabungan Baru
             </button>
         </section>
 
     </main>
 
     <div class="fab-container">
-        <div class="fab-menu" id="fabMenu">
-            <div class="fab-item" onclick="openBottomSheet('Transaksi')">
-                <span>Tambah Transaksi</span>
-                <div class="fab-icon-wrapper"><i data-feather="repeat" width="16" height="16"></i></div>
-            </div>
-            <div class="fab-item" onclick="openBottomSheet('Kantong')">
-                <span>Tambah Kantong</span>
-                <div class="fab-icon-wrapper"><i data-feather="pocket" width="16" height="16"></i></div>
-            </div>
-            <div class="fab-item" onclick="openBottomSheet('Tabungan')">
-                <span>Tambah Tabungan</span>
-                <div class="fab-icon-wrapper"><i data-feather="target" width="16" height="16"></i></div>
-            </div>
-        </div>
-        <button class="fab-btn" id="fabBtn">
+        <button class="fab-btn" onclick="openBottomSheet('Transaksi')" title="Tambah Transaksi">
             <i data-feather="plus"></i>
         </button>
     </div>
@@ -138,11 +124,100 @@
                 <i data-feather="x" width="20" height="20"></i>
             </button>
         </div>
+        
         <div class="sheet-content">
-            <p style="color: var(--text-secondary); text-align: center; margin: 20px 0;">
-                Formulir untuk mengatur <strong id="sheetTypeName" style="color: var(--primary-color);"></strong> akan muncul di sini.
-            </p>
-            <button class="save-btn" onclick="closeBottomSheet()">Simpan Perubahan</button>
+            
+            <div id="formTransaksi" style="display: none;">
+                <div class="form-group">
+                    <label>Jenis Transaksi / Sumber</label>
+                    <select class="form-input">
+                        <option value="" disabled selected>-- Pilih Lokasi Transaksi --</option>
+                        <optgroup label="Pengeluaran / Pemasukan">
+                            <option value="k1">Kantong - Dompet Tunai</option>
+                            <option value="k2">Kantong - GoPay</option>
+                        </optgroup>
+                        <optgroup label="Menabung / Tarik Tabungan">
+                            <option value="t1">Tabungan - Beli Laptop</option>
+                            <option value="t2">Tabungan - Investasi Saham</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nominal</label>
+                    <input type="number" class="form-input" placeholder="Rp 0" />
+                </div>
+                <div class="form-group">
+                    <label>Catatan</label>
+                    <input type="text" class="form-input" placeholder="Misal: Makan Siang / Isi GoPay" />
+                </div>
+                <button class="save-btn" onclick="closeBottomSheet()">Simpan Transaksi</button>
+            </div>
+
+            <div id="formKantong" style="display: none;">
+                <div class="form-group">
+                    <label>Nama Kantong Baru</label>
+                    <input type="text" class="form-input" placeholder="Misal: BCA Tabungan" />
+                </div>
+                <div class="form-group">
+                    <label>Saldo Awal</label>
+                    <input type="number" class="form-input" placeholder="Rp 0" />
+                </div>
+                <button class="save-btn" onclick="closeBottomSheet()">Tambah Kantong</button>
+            </div>
+
+            <div id="formTabungan" style="display: none;">
+                <div class="form-group">
+                    <label>Nama Tabungan / Target Baru</label>
+                    <input type="text" class="form-input" placeholder="Misal: Beli Sepatu Baru" />
+                </div>
+                <div class="form-group">
+                    <label>Target Nominal Tersimpan</label>
+                    <input type="number" class="form-input" placeholder="Rp 0" />
+                </div>
+                <button class="save-btn" onclick="closeBottomSheet()">Tambah Tabungan</button>
+            </div>
+
+            <div id="formDetail" style="display: none;">
+                <div class="form-group">
+                    <label>Ubah Saldo Saat Ini</label>
+                    <input type="number" class="form-input" id="detailBalanceInput" placeholder="Rp 0" />
+                </div>
+                
+                <div class="form-group">
+                    <label>Riwayat Transaksi</label>
+                    <div class="history-list">
+                        <div class="history-item">
+                            <div class="history-info">
+                                <span class="history-title">Makan Siang</span>
+                                <span class="history-date">Hari ini, 12:30</span>
+                            </div>
+                            <div class="history-right">
+                                <span class="history-amount expense">- Rp 45.000</span>
+                                <div class="history-actions">
+                                    <button class="trx-action-btn edit" onclick="editTrx(event)" title="Edit"><i data-feather="edit-2"></i></button>
+                                    <button class="trx-action-btn delete" onclick="deleteTrx(event)" title="Hapus"><i data-feather="trash-2"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-item">
+                            <div class="history-info">
+                                <span class="history-title">Isi Saldo</span>
+                                <span class="history-date">Kemarin, 09:15</span>
+                            </div>
+                            <div class="history-right">
+                                <span class="history-amount income">+ Rp 100.000</span>
+                                <div class="history-actions">
+                                    <button class="trx-action-btn edit" onclick="editTrx(event)" title="Edit"><i data-feather="edit-2"></i></button>
+                                    <button class="trx-action-btn delete" onclick="deleteTrx(event)" title="Hapus"><i data-feather="trash-2"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="save-btn" onclick="closeBottomSheet()">Simpan Perubahan Saldo</button>
+            </div>
+
         </div>
     </div>
 
