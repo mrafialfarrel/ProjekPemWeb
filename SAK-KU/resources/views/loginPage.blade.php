@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="{{ asset('css/login-page.css') }}">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle"></button>
+
+    <div class="container" id="container">
+        
+        <div class="form-container sign-up-container">
+            <form action="#">
+                <h1>Welcome Back</h1>
+                <p style="margin-bottom: 20px; color: var(--text-secondary);">Masuk menggunakan email sak-ku Anda</p>
+                
+                <input type="email" placeholder="Email" id="loginEmail"/>
+                <input type="password" placeholder="Password" id="loginPassword"/>
+                <a href="#">Lupa password?</a>
+                <button type="button" id="btnSubmitSignIn">SIGN IN</button>
+            </form>
+        </div> 
+
+        <div class="form-container sign-in-container">
+            <form action="#">
+                <h1>Mulai sak-ku</h1>
+                <p style="margin-bottom: 20px; color: var(--text-secondary);">Daftarkan data diri Anda</p>
+                
+                <input type="text" placeholder="Nama Panggilan" id="regName"/>
+                <input type="email" placeholder="Email" id="regEmail"/>
+                <input type="password" placeholder="Password" id="regPassword"/>
+                <button type="button" id="btnSubmitSignUp">SIGN UP</button>
+            </form>
+        </div>
+
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Baru di sak-ku?</h1>
+                    <p>Ayo mulai catat pengeluaran dan atur budget-mu hari ini agar finansial lebih sehat!</p>
+                    <button class="ghost" id="btnGoSignUp">SIGN UP</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Halo!</h1>
+                    <p>Masuk sekarang untuk memantau progress budget dan ringkasan keuanganmu.</p>
+                    <button class="ghost" id="btnGoSignIn">SIGN IN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ asset('js/login-page.js') }}"></script>
+</body>
+</html>

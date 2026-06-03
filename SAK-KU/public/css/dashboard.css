@@ -1,0 +1,255 @@
+/* --- TEMA & VARIABEL WARNA SAK-KU --- */
+:root {
+    /* Warna Utama dari Kotlin App */
+    --primary-color: #9C27B0; /* PurplePrimary */
+    --secondary-color: #FF80AB; /* SoftPink (Untuk gradient di halaman login) */
+    --text-on-primary: #FFFFFF;
+
+    /* Light Theme (Mengikuti background pinkish/warm white) */
+    --bg-color: #F8F4F6;
+    --surface-color: #FFFFFF;
+    --text-primary: #333333;
+    --text-secondary: #777777;
+    
+    /* Warna elemen form & menu */
+    --input-bg: #EEEEEE;
+    --menu-icon-bg: #EEDDF5;
+    --border-color: #DDDDDD;
+}
+
+/* Class untuk Dark Mode */
+body.dark-mode {
+    /* Dark Theme (Mengikuti background dark navy/purple) */
+    --bg-color: #0F101C;
+    --surface-color: #1A1A2E; 
+    --text-primary: #FFFFFF;
+    --text-secondary: #AAAAAA;
+    
+    /* Warna elemen form & menu */
+    --input-bg: #2A1F3D;
+    --menu-icon-bg: #2A1F3D;
+    --border-color: #2D2D42;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Arial', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- NAVBAR ATAS --- */
+.top-navbar {
+    /* Hapus baris background-color: var(--primary-color); lalu ganti dengan 3 baris di bawah ini: */
+    background: var(--primary-color);
+    background: -webkit-linear-gradient(to right, var(--secondary-color), var(--primary-color));
+    background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+    
+    color: var(--text-on-primary);
+    padding: 15px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-content h1 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1);
+}
+
+/* --- KONTEN UTAMA --- */
+.dashboard-container {
+    max-width: 800px; /* Membatasi lebar maksimal agar bagus di PC */
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+/* --- KARTU RINGKASAN (GRID) --- */
+.summary-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.card {
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: background-color 0.3s ease;
+}
+
+.balance-card {
+    /* Hapus baris background-color: var(--primary-color); lalu ganti dengan 3 baris di bawah ini: */
+    background: var(--primary-color);
+    background: -webkit-linear-gradient(to bottom right, var(--secondary-color), var(--primary-color));
+    background: linear-gradient(to bottom right, var(--secondary-color), var(--primary-color));
+    
+    color: var(--text-on-primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Tambahan efek bayangan (glow) ungu yang tipis agar lebih mewah */
+    box-shadow: 0 8px 15px rgba(156, 39, 176, 0.2); 
+}
+
+.balance-card p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.balance-card h2 {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.cashflow-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.stat-card {
+    background-color: var(--surface-color);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stat-header {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-card h3 {
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+.icon-income { color: #4CAF50; font-weight: bold; }
+.icon-expense { color: #F44336; font-weight: bold; }
+
+/* Responsif: Jika di HP, jadikan satu kolom menumpuk */
+@media (max-width: 600px) {
+    .summary-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- TOMBOL MENU --- */
+.menu-section {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: transform 0.2s ease;
+}
+
+.menu-btn:hover {
+    transform: translateY(-3px);
+}
+
+.menu-icon {
+    background-color: var(--menu-icon-bg);
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    transition: background-color 0.3s ease;
+}
+
+.menu-btn span {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* --- RIWAYAT TRANSAKSI --- */
+.transaction-section h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+}
+
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.transaction-item {
+    background-color: var(--surface-color);
+    padding: 18px 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: background-color 0.3s ease;
+}
+
+.trx-name {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.trx-amount {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.trx-amount.muted {
+    color: var(--text-secondary); /* Karena Rp 0, saya beri warna abu-abu */
+}
