@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\KantongController; 
+use App\Http\Controllers\AlokasiController; 
 use App\Http\Controllers\TransaksiController;
 
 // Halaman utama (Arahkan ke file login di dalam folder auth)
