@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Dynamic Title -->
+    <title>@yield('title', 'SAK-KU')</title>
+    
+    <!-- Global Scripts (e.g., Feather Icons) -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- External library scripts needed in the head (e.g., Chart.js) -->
+    @stack('head-scripts')
+    
+    <!-- Page Specific CSS -->
+    @stack('styles')
+</head>
+<body>
+
+    <!-- This slot is where your individual pages will inject their UI -->
+    @yield('content')
+
+    <!-- Initialize Feather Icons globally after the DOM loads -->
+    <script>
+        feather.replace();
+    </script>
+    
+    <!-- Page Specific JavaScript -->
+    @stack('scripts')
+</body>
+</html>

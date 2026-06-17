@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | SAK-KU</title>
+@extends('layouts.app')
+
+@section('title', 'Dashboard | SAK-KU')
+
+@push('styles')
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-    <script src="https://unpkg.com/feather-icons"></script>
-</head>
-<body>
+@endpush
+
+@section('content')
     <header class="top-navbar">
         <div class="nav-content">
             <h1>Dashboard Keuangan</h1>
@@ -64,7 +63,8 @@
             </div>
         </section>
     </main>
+@endsection
 
+@push('scripts')
     <script src="{{ asset('js/dashboard.js') }}"></script>
-</body>
-</html>
+@endpush

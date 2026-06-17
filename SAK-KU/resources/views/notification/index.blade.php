@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifikasi | SAK-KU</title>
+@extends('layouts.app')
+
+@section('title', 'Notifikasi | SAK-KU')
+
+@push('styles')
     <link rel="stylesheet" href="{{ asset('css/notifikasi.css') }}">
-    <script src="https://unpkg.com/feather-icons"></script>
-</head>
-<body>
+@endpush
+
+@section('content')
     <header class="top-navbar">
         <div class="nav-content">
             <button class="icon-btn" onclick="window.location.href='{{ url('/dashboard') }}'">
@@ -61,7 +60,8 @@
         </div>
 
     </main>
+@endsection
 
+@push('scripts')
     <script src="{{ asset('js/notifikasi.js') }}"></script>
-</body>
-</html>
+@endpush

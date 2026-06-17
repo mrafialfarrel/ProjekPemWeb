@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+@extends('layouts.app')
+
+@section('title', 'Login | SAK-KU')
+
+@push('styles')
     <link rel="stylesheet" href="{{ asset('css/login-page.css') }}">
-    <script src="https://unpkg.com/feather-icons"></script>
-</head>
-<body>
+@endpush
+
+@section('content')
     <button class="theme-toggle" id="themeToggle"></button>
 
     <div class="container" id="container">
@@ -51,7 +50,8 @@
             </div>
         </div>
     </div>
+@endsection
 
+@push('scripts')
     <script src="{{ asset('js/login-page.js') }}"></script>
-</body>
-</html>
+@endpush

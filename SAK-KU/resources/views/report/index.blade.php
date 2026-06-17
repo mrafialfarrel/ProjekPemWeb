@@ -1,14 +1,17 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan | sak-ku</title>
+@extends('layouts.app')
+
+@section('title', 'Laporan | SAK-KU')
+
+@push('styles')
     <link rel="stylesheet" href="{{ asset('css/laporan.css') }}">
-    <script src="https://unpkg.com/feather-icons"></script>
+@endpush
+
+@push('head-scripts')
+    <!-- Specific library for this page, pushed into the <head> -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+@endpush
+
+@section('content')
     <header class="top-navbar">
         <div class="nav-content">
             <button class="icon-btn" onclick="window.location.href='{{ url('/dashboard') }}'">
@@ -136,7 +139,8 @@
             </button>
         </div>
     </div>
+@endsection
 
+@push('scripts')
     <script src="{{ asset('js/laporan.js') }}"></script>
-</body>
-</html>
+@endpush

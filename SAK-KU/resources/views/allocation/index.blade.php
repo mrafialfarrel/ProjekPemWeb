@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kantong | sak-ku</title>
+@extends('layouts.app')
+
+@section('title', 'Kantong | SAK-KU')
+
+@push('styles')
     <link rel="stylesheet" href="{{ asset('css/kantong.css') }}">
-    <script src="https://unpkg.com/feather-icons"></script>
-</head>
-<body>
+@endpush
+
+@section('content')
     <header class="top-navbar">
         <div class="nav-content">
             <button class="icon-btn" onclick="window.location.href='{{ url('/dashboard') }}'">
@@ -25,7 +24,7 @@
         <section class="total-section">
             <div class="card balance-card">
                 <p>Total Kekayaan</p>
-                <h2>Rp {{ number_format($total_kekayaan, 0, ',', '.') }}</h2>
+                <h2>Rp {{ number_format($total_kekayaan ?? 0, 0, ',', '.') }}</h2>
             </div>
         </section>
 
@@ -34,18 +33,20 @@
                 <h3>Kantong</h3>
             </div>
             
-            @foreach($list_kantong as $index => $k)
-            <div class="pocket-item" onclick="openDetailSheet('{{ $k->id }}', '{{ $k->nama_kantong }}', '{{ $k->saldo }}', 0, 'kantong')">
-                <div class="pocket-number">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
-                <div class="pocket-info">
-                    <h4>{{ $k->nama_kantong }}</h4>
-                    <p>Kantong Utama</p>
+            @if(isset($list_kantong))
+                @foreach($list_kantong as $index => $k)
+                <div class="pocket-item" onclick="openDetailSheet('{{ $k->id }}', '{{ $k->nama_kantong }}', '{{ $k->saldo }}', 0, 'kantong')">
+                    <div class="pocket-number">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
+                    <div class="pocket-info">
+                        <h4>{{ $k->nama_kantong }}</h4>
+                        <p>Kantong Utama</p>
+                    </div>
+                    <div class="pocket-balance">
+                        <h4>Rp {{ number_format($k->saldo, 0, ',', '.') }}</h4>
+                    </div>
                 </div>
-                <div class="pocket-balance">
-                    <h4>Rp {{ number_format($k->saldo, 0, ',', '.') }}</h4>
-                </div>
-            </div>
-            @endforeach
+                @endforeach
+            @endif
 
             <button class="section-action-btn" onclick="openBottomSheet('Kantong')">
                 <i data-feather="plus" width="16" height="16" style="margin-right: 5px;"></i> Tambah Kantong Baru
@@ -57,32 +58,34 @@
                 <h3>Tabungan</h3>
             </div>
 
-            @foreach($list_tabungan as $index => $t)
-            <div class="savings-item" onclick="openDetailSheet('{{ $t->id }}', '{{ $t->nama_kantong }}', '{{ $t->saldo }}', '{{ $t->target }}', 'tabungan')">
-                <div class="savings-header">
-                    <div class="pocket-number">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
-                    <div class="pocket-info">
-                        <h4>{{ $t->nama_kantong }}</h4>
-                        <p>Target: Rp {{ number_format($t->target, 0, ',', '.') }}</p>
+            @if(isset($list_tabungan))
+                @foreach($list_tabungan as $index => $t)
+                <div class="savings-item" onclick="openDetailSheet('{{ $t->id }}', '{{ $t->nama_kantong }}', '{{ $t->saldo }}', '{{ $t->target }}', 'tabungan')">
+                    <div class="savings-header">
+                        <div class="pocket-number">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
+                        <div class="pocket-info">
+                            <h4>{{ $t->nama_kantong }}</h4>
+                            <p>Target: Rp {{ number_format($t->target, 0, ',', '.') }}</p>
+                        </div>
+                    </div>
+                    <div class="goal-area">
+                        <div class="goal-stats">
+                            <span>Terkumpul: <strong>Rp {{ number_format($t->saldo, 0, ',', '.') }}</strong></span>
+                        </div>
+                        
+                        @php 
+                            $persen = $t->target > 0 ? ($t->saldo / $t->target) * 100 : 0; 
+                            // Dibatasi maksimal 100% agar bar tidak keluar jalur
+                            $persen = $persen > 100 ? 100 : $persen;
+                        @endphp
+                        
+                        <div class="progress-track">
+                            <div class="progress-fill" style="width: {{ $persen }}%;"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="goal-area">
-                    <div class="goal-stats">
-                        <span>Terkumpul: <strong>Rp {{ number_format($t->saldo, 0, ',', '.') }}</strong></span>
-                    </div>
-                    
-                    @php 
-                        $persen = $t->target > 0 ? ($t->saldo / $t->target) * 100 : 0; 
-                        // Dibatasi maksimal 100% agar bar tidak keluar jalur
-                        $persen = $persen > 100 ? 100 : $persen;
-                    @endphp
-                    
-                    <div class="progress-track">
-                        <div class="progress-fill" style="width: {{ $persen }}%;"></div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
+                @endforeach
+            @endif
 
             <button class="section-action-btn" onclick="openBottomSheet('Tabungan')">
                 <i data-feather="plus" width="16" height="16" style="margin-right: 5px;"></i> Tambah Tabungan Baru
@@ -123,16 +126,20 @@
                         <label>Pilih Kantong / Tabungan</label>
                         <select name="kantong_id" class="form-input" required>
                             <option value="" disabled selected>-- Pilih Sumber Dana --</option>
-                            <optgroup label="Kantong">
-                                @foreach($list_kantong as $k)
-                                    <option value="{{ $k->id }}">{{ $k->nama_kantong }}</option>
-                                @endforeach
-                            </optgroup>
-                            <optgroup label="Tabungan">
-                                @foreach($list_tabungan as $t)
-                                    <option value="{{ $t->id }}">{{ $t->nama_kantong }}</option>
-                                @endforeach
-                            </optgroup>
+                            @if(isset($list_kantong))
+                                <optgroup label="Kantong">
+                                    @foreach($list_kantong as $k)
+                                        <option value="{{ $k->id }}">{{ $k->nama_kantong }}</option>
+                                    @endforeach
+                                </optgroup>
+                            @endif
+                            @if(isset($list_tabungan))
+                                <optgroup label="Tabungan">
+                                    @foreach($list_tabungan as $t)
+                                        <option value="{{ $t->id }}">{{ $t->nama_kantong }}</option>
+                                    @endforeach
+                                </optgroup>
+                            @endif
                         </select>
                     </div>
 
@@ -152,7 +159,8 @@
 
             <div id="formKantong" style="display: none;">
                 <form action="{{ url('/kantong') }}" method="POST">
-                    @csrf <div class="form-group">
+                    @csrf 
+                    <div class="form-group">
                         <label>Nama Kantong Baru</label>
                         <input type="text" name="nama_kantong" class="form-input" placeholder="Misal: BCA Tabungan" required />
                     </div>
@@ -223,7 +231,8 @@
 
         </div>
     </div>
+@endsection
 
+@push('scripts')
     <script src="{{ asset('js/kantong.js') }}"></script>
-</body>
-</html>
+@endpush
