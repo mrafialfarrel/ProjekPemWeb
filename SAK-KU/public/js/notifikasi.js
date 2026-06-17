@@ -37,6 +37,6 @@ btnLogout.addEventListener('click', () => {
     const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari aplikasi sak-ku?");
     
     if (konfirmasi) {
-        window.location.href = 'LoginPage.html'; 
+        window.location.href = '/'; 
     }
 });

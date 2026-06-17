@@ -71,7 +71,7 @@ prefersDarkScheme.addEventListener('change', (e) => {
     if (loginEmail.value.trim() === '' || loginPassword.value.trim() === ''){
         alert('Ups! Email dan password akun kamu tidak boleh kosong.');
     } else {
-        window.location.href = 'Dashboard.html';
+        window.location.href = '/dashboard';
     }
  });
 
@@ -81,7 +81,7 @@ prefersDarkScheme.addEventListener('change', (e) => {
     if (regName.value.trim() === '' || regEmail.value.trim() === '' || regPassword.value.trim() === ''){
         alert('Mohon lengkapi Nama, Email, dan Password untuk mulai mencatat keuanganmu');
     } else {
-        window.location = 'Dashboard.html';
+        window.location.href ='/dashboard';
     }
  });
 

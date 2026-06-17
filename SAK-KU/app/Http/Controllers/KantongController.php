@@ -14,7 +14,7 @@ class KantongController extends Controller
         $list_tabungan = Kantong::where('tipe', 'tabungan')->get();
         $total_kekayaan = Kantong::sum('saldo');
         
-        return view('kantong', compact('list_kantong', 'list_tabungan', 'total_kekayaan'));
+        return view('allocation.index', compact('list_kantong', 'list_tabungan', 'total_kekayaan'));
     }
 
     // 2. Fungsi menambah data baru
