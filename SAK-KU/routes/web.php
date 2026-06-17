@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AlokasiController; 
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\NotifikasiController;
 
 // Halaman utama (Arahkan ke file login di dalam folder auth)
 Route::get('/', function () {
@@ -46,3 +47,8 @@ Route::get('/kantong', [AlokasiController::class, 'index']); //read
 Route::post('/kantong', [AlokasiController::class, 'store']); //simpan
 Route::put('/kantong/{id}', [AlokasiController::class, 'update']); //edit
 Route::delete('/kantong/{id}', [AlokasiController::class, 'destroy']); //delete
+
+// Rute Notifikasi
+Route::get('/notifikasi', [NotifikasiController::class, 'index']);
+Route::patch('/notifikasi/{id}/read', [NotifikasiController::class, 'markAsRead']);
+Route::post('/notifikasi/read-all', [NotifikasiController::class, 'markAllAsRead']);
