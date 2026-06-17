@@ -42,7 +42,7 @@ Route::get('/transaksi', function () {
 Route::post('/transaksi', [TransaksiController::class, 'store']);
 
 // Route Kantong (Allocation)
-Route::get('/kantong', [KantongController::class, 'index']); // Nampilin halaman
-Route::post('/kantong', [KantongController::class, 'store']); // Nyimpen data form
-Route::put('/kantong/{id}', [KantongController::class, 'update']); // Untuk edit/update
-Route::delete('/kantong/{id}', [KantongController::class, 'destroy']); // Untuk hapus
+Route::get('/kantong', [AlokasiController::class, 'index']); //read
+Route::post('/kantong', [AlokasiController::class, 'store']); //simpan
+Route::put('/kantong/{id}', [AlokasiController::class, 'update']); //edit
+Route::delete('/kantong/{id}', [AlokasiController::class, 'destroy']); //delete

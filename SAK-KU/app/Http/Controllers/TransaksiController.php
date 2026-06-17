@@ -2,31 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Transaksi;
-use App\Models\Kantong;
+use Illuminate\Http\Request;
 
 class TransaksiController extends Controller
 {
+    /**
+     * Menyimpan Transaksi Baru
+     */
     public function store(Request $request)
     {
-        // 1. Simpan data transaksi
+        // Berdasarkan form HTML Anda: 
+        // <select name="jenis"> memiliki value "masuk" atau "keluar"
+        $isPemasukan = $request->jenis === 'masuk';
+
         Transaksi::create([
-            'kantong_id' => $request->kantong_id,
-            'jenis' => $request->jenis,
-            'nominal' => $request->nominal,
-            'catatan' => $request->catatan,
+            'alokasi_id'   => $request->kantong_id,
+            'nominal'      => $request->nominal,
+            'is_pemasukan' => $isPemasukan,
+            'keterangan'   => $request->catatan ?? 'Tanpa Keterangan',
+            'kategori'     => 'Umum', // Anda bisa menambahkan dropdown kategori di form HTML nanti
+            'tanggal'      => now(),
         ]);
 
-        // 2. Update Saldo di tabel Kantong
-        $kantong = Kantong::find($request->kantong_id);
-        if ($request->jenis == 'masuk') {
-            $kantong->saldo += $request->nominal;
-        } else {
-            $kantong->saldo -= $request->nominal;
-        }
-        $kantong->save();
-
-        return redirect()->back()->with('success', 'Transaksi berhasil dicatat!');
+        return back();
     }
 }
