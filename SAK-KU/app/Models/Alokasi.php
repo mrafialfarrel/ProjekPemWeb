@@ -32,4 +32,15 @@ class Alokasi extends Model
     {
         return $this->hasMany(Transaksi::class, 'alokasi_id');
     }
+    /**
+     * ACCESSOR SALDO: Menghitung saldo secara dinamis dari relasi transaksi
+     * Rumus: Pemasukan (masuk) - Pengeluaran (keluar)
+     */
+    public function getSaldoAttribute()
+    {
+        $masuk = $this->transaksi->where('jenis', 'masuk')->sum('nominal');
+        $keluar = $this->transaksi->where('jenis', 'keluar')->sum('nominal');
+        
+        return $masuk - $keluar;
+    }
 }

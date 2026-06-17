@@ -30,10 +30,7 @@ Route::get('/notifikasi', function () {
 });
 
 // Halaman Transaksi (Opsional, jika ingin menampilkan UI list transaksi)
-Route::get('/transaksi', function () {
-    return view('transaction.index'); // Mencari resources/views/transaction/index.blade.php
-});
-
+Route::get('/transaksi', [TransaksiController::class, 'index']);
 // ---------------------------------------------------------
 // ROUTE LOGIC (Controllers)
 // ---------------------------------------------------------
