@@ -38,4 +38,19 @@ return new class extends Migration
     {
         Schema::dropIfExists('allocations');
     }
+
+    
+    public function index() 
+    {
+    // Ambil data beserta transaksi pengiringnya (Eager Loading)
+    $alokasi = Alokasi::with('transaksi')->get();
+
+    $list_kantong = $alokasi->where('is_tabungan', false);
+    $list_tabungan = $alokasi->where('is_tabungan', true);
+    
+    // Total kekayaan diambil dari jumlah saldo seluruh alokasi
+    $total_kekayaan = $alokasi->sum('saldo'); 
+
+    return view('kantong', compact('list_kantong', 'list_tabungan', 'total_kekayaan'));
+    }
 };

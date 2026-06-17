@@ -35,10 +35,11 @@
             
             @if(isset($list_kantong))
                 @foreach($list_kantong as $index => $k)
-                <div class="pocket-item" onclick="openDetailSheet('{{ $k->id }}', '{{ $k->nama_kantong }}', '{{ $k->saldo }}', 0, 'kantong')">
+                {{-- Modifikasi: Menggunakan $k->nama dan $k->saldo --}}
+                <div class="pocket-item" onclick="openDetailSheet('{{ $k->id }}', '{{ $k->nama }}', '{{ $k->saldo }}', 0, 'kantong')">
                     <div class="pocket-number">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
                     <div class="pocket-info">
-                        <h4>{{ $k->nama_kantong }}</h4>
+                        <h4>{{ $k->nama }}</h4>
                         <p>Kantong Utama</p>
                     </div>
                     <div class="pocket-balance">
@@ -60,12 +61,13 @@
 
             @if(isset($list_tabungan))
                 @foreach($list_tabungan as $index => $t)
-                <div class="savings-item" onclick="openDetailSheet('{{ $t->id }}', '{{ $t->nama_kantong }}', '{{ $t->saldo }}', '{{ $t->target }}', 'tabungan')">
+                {{-- Modifikasi: Menggunakan $t->nama, $t->saldo, dan $t->target_nominal --}}
+                <div class="savings-item" onclick="openDetailSheet('{{ $t->id }}', '{{ $t->nama }}', '{{ $t->saldo }}', '{{ $t->target_nominal }}', 'tabungan')">
                     <div class="savings-header">
                         <div class="pocket-number">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
                         <div class="pocket-info">
-                            <h4>{{ $t->nama_kantong }}</h4>
-                            <p>Target: Rp {{ number_format($t->target, 0, ',', '.') }}</p>
+                            <h4>{{ $t->nama }}</h4>
+                            <p>Target: Rp {{ number_format($t->target_nominal, 0, ',', '.') }}</p>
                         </div>
                     </div>
                     <div class="goal-area">
@@ -74,9 +76,8 @@
                         </div>
                         
                         @php 
-                            $persen = $t->target > 0 ? ($t->saldo / $t->target) * 100 : 0; 
-                            // Dibatasi maksimal 100% agar bar tidak keluar jalur
-                            $persen = $persen > 100 ? 100 : $persen;
+                            $persen = $t->target_nominal > 0 ? ($t->saldo / $t->target_nominal) * 100 : 0; 
+                            $persen = $persen > 100 ? 100 : ($persen < 0 ? 0 : $persen);
                         @endphp
                         
                         <div class="progress-track">
@@ -95,7 +96,7 @@
     </main>
 
     <div class="fab-container">
-        <button class="fab-btn" onclick="openBottomSheet('Transaksi')" title="Tambah Transaksi">
+        <button class="fab-btn" onclick="window.location.href='{{ url('/transaksi') }}'">
             <i data-feather="plus"></i>
         </button>
     </div>
@@ -111,8 +112,9 @@
         </div>
         
         <div class="sheet-content">
+            {{-- Form Transaksi --}}
             <div id="formTransaksi" style="display: none;">
-                <form action="{{ url('/transaksi') }}" methods="POST">
+                <form action="{{ url('/transaksi') }}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label>Jenis Transaksi</label>
@@ -124,19 +126,19 @@
 
                     <div class="form-group">
                         <label>Pilih Kantong / Tabungan</label>
-                        <select name="kantong_id" class="form-input" required>
+                        <select name="alokasi_id" class="form-input" required>
                             <option value="" disabled selected>-- Pilih Sumber Dana --</option>
                             @if(isset($list_kantong))
                                 <optgroup label="Kantong">
                                     @foreach($list_kantong as $k)
-                                        <option value="{{ $k->id }}">{{ $k->nama_kantong }}</option>
+                                        <option value="{{ $k->id }}">{{ $k->nama }}</option>
                                     @endforeach
                                 </optgroup>
                             @endif
                             @if(isset($list_tabungan))
                                 <optgroup label="Tabungan">
                                     @foreach($list_tabungan as $t)
-                                        <option value="{{ $t->id }}">{{ $t->nama_kantong }}</option>
+                                        <option value="{{ $t->id }}">{{ $t->nama }}</option>
                                     @endforeach
                                 </optgroup>
                             @endif
@@ -157,48 +159,52 @@
                 </form>
             </div>
 
+            {{-- Form Tambah Kantong --}}
             <div id="formKantong" style="display: none;">
                 <form action="{{ url('/kantong') }}" method="POST">
                     @csrf 
+                    {{-- Modifikasi input name: nama_kantong -> nama --}}
                     <div class="form-group">
                         <label>Nama Kantong Baru</label>
-                        <input type="text" name="nama_kantong" class="form-input" placeholder="Misal: BCA Tabungan" required />
+                        <input type="text" name="nama" class="form-input" placeholder="Misal: BCA Tabungan" required />
                     </div>
+                    {{-- Karena saldo awal tidak ada di tabel allocations, pastikan di Controller kamu menangani input ini untuk otomatis membuat data transaksi "masuk" pertama kali --}}
                     <div class="form-group">
                         <label>Saldo Awal</label>
-                        <input type="number" name="saldo" class="form-input" placeholder="Rp 0" required />
+                        <input type="number" name="saldo_awal" class="form-input" placeholder="Rp 0" required />
                     </div>
                     
                     <button type="submit" class="save-btn">Tambah Kantong</button>
                 </form>
             </div>
 
+            {{-- Form Tambah Tabungan --}}
             <div id="formTabungan" style="display: none;">
                 <form action="{{ url('/kantong') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="tipe" value="tabungan">
+                    <input type="hidden" name="is_tabungan" value="1">
                     
+                    {{-- Modifikasi input name: nama_kantong -> nama --}}
                     <div class="form-group">
                         <label>Nama Tabungan / Target Baru</label>
-                        <input type="text" name="nama_kantong" class="form-input" placeholder="Misal: Beli Sepatu Baru" required />
+                        <input type="text" name="nama" class="form-input" placeholder="Misal: Beli Sepatu Baru" required />
                     </div>
+                    {{-- Modifikasi input name: target -> target_nominal --}}
                     <div class="form-group">
                         <label>Target Nominal Tersimpan</label>
-                        <input type="number" name="target" class="form-input" placeholder="Rp 0" required />
+                        <input type="number" name="target_nominal" class="form-input" placeholder="Rp 0" required />
                     </div>
                     <button type="submit" class="save-btn">Tambah Tabungan</button>
                 </form>
             </div>
 
+            {{-- Form Detail / Edit / Delete --}}
             <div id="formDetail" style="display: none;">
-                
                 <form id="formEditKantong" action="" method="POST">
                     @csrf
-                    @method('PUT')
-
-                    <div class="form-group">
+                    @method('PUT') <div class="form-group">
                         <label>Nama Akun</label>
-                        <input type="text" name="nama_kantong" id="editNama" class="form-input" required>
+                        <input type="text" name="nama" id="editNama" class="form-input" required>
                     </div>
 
                     <div class="form-group">
@@ -208,10 +214,10 @@
 
                     <div class="form-group" id="groupTarget" style="display: none;">
                         <label>Target Nominal</label>
-                        <input type="number" name="target" id="editTarget" class="form-input">
+                        <input type="number" name="target_nominal" id="editTarget" class="form-input">
                     </div>
                     
-                    <button type="submit" class="save-btn" style="margin-bottom: 10px;">Simpan Perubahan Saldo</button>
+                    <button type="submit" class="save-btn" style="margin-bottom: 10px;">Simpan Perubahan</button>
                 </form>
 
                 <form id="formDeleteKantong" action="" method="POST" onsubmit="return confirm('Apakah kamu yakin ingin menghapus kantong ini? Semua data di dalamnya akan hilang.')">
@@ -226,7 +232,6 @@
                         <p style="text-align: center; font-size: 12px; color: gray;">Belum ada sistem transaksi.</p>
                     </div>
                 </div>
-                
             </div>
 
         </div>

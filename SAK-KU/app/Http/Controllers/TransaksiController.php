@@ -82,4 +82,14 @@ class TransaksiController extends Controller
 
         return back()->with('success', 'Transaksi berhasil dihapus!');
     }
+    public function index()
+    {
+        // Mengambil transaksi urut dari yang terbaru
+        $transaksi = Transaksi::with('alokasi')->latest('tanggal')->get();
+        
+        // Mengambil daftar dompet/tabungan untuk form pilihan
+        $list_alokasi = Alokasi::all();
+
+        return view('transaction.index', compact('transaksi', 'list_alokasi'));
+    }
 }

@@ -23,8 +23,28 @@ Route::post('/kantong', [AlokasiController::class, 'store']);
 Route::put('/kantong/{id}', [AlokasiController::class, 'update']); 
 Route::delete('/kantong/{id}', [AlokasiController::class, 'destroy']); 
 
+<<<<<<< HEAD
 // 4. Transaksi
 Route::get('/transaksi', [TransaksiController::class, 'index']); 
+=======
+// Halaman Laporan (Report)
+Route::get('/laporan', function () {
+    return view('report.index'); // Mencari resources/views/report/index.blade.php
+});
+
+// Halaman Notifikasi
+Route::get('/notifikasi', function () {
+    return view('notification.index'); // Mencari resources/views/notification/index.blade.php
+});
+
+// Halaman Transaksi (Opsional, jika ingin menampilkan UI list transaksi)
+Route::get('/transaksi', [TransaksiController::class, 'index']);
+// ---------------------------------------------------------
+// ROUTE LOGIC (Controllers)
+// ---------------------------------------------------------
+
+// Route Transaksi
+>>>>>>> e9787ab24aba54537c2ec822d7303798a4791c57
 Route::post('/transaksi', [TransaksiController::class, 'store']);
 Route::put('/transaksi/{id}', [TransaksiController::class, 'update']);
 Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy']);
