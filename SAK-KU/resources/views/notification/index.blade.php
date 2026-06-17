@@ -25,40 +25,60 @@
     </header>
 
     <main class="notif-container">
-        
-        <div class="notif-item unread">
-            <div class="notif-icon danger">
-                <i data-feather="alert-triangle"></i>
+        @if($notifikasi->isNotEmpty() && $notifikasi->where('is_read', false)->isNotEmpty())
+            <div class="notif-header-actions">
+                <form action="{{ url('/notifikasi/read-all') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="read-all-btn">
+                        <i data-feather="check-square"></i> Tandai Semua Dibaca
+                    </button>
+                </form>
             </div>
-            <div class="notif-content">
-                <h4>Peringatan Kantong!</h4>
-                <p>Pengeluaran untuk "Makan Siang" sudah mendekati batas budget bulan ini.</p>
-                <span class="notif-time">10 menit yang lalu</span>
-            </div>
-        </div>
+        @endif
 
-        <div class="notif-item unread">
-            <div class="notif-icon success">
-                <i data-feather="check-circle"></i>
-            </div>
-            <div class="notif-content">
-                <h4>Pemasukan Tercatat</h4>
-                <p>Gaji bulanan sebesar Rp 5.000.000 berhasil ditambahkan ke total saldo Anda.</p>
-                <span class="notif-time">2 jam yang lalu</span>
-            </div>
-        </div>
+        @forelse ($notifikasi as $notif)
+            @if(!$notif->is_read)
+                <form id="mark-read-{{ $notif->id }}" action="{{ url('/notifikasi/' . $notif->id . '/read') }}" method="POST" style="display: none;">
+                    @csrf
+                    @method('PATCH')
+                </form>
+            @endif
 
-        <div class="notif-item">
-            <div class="notif-icon info">
-                <i data-feather="info"></i>
-            </div>
-            <div class="notif-content">
-                <h4>Fitur Laporan Baru</h4>
-                <p>Cek ringkasan pengeluaran mingguanmu sekarang dengan grafik yang lebih detail.</p>
-                <span class="notif-time">Kemarin</span>
-            </div>
-        </div>
+            <div class="notif-item {{ $notif->is_read ? '' : 'unread' }}" 
+                 @if(!$notif->is_read) onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notif->id }}').submit();" @endif>
+                
+                @php
+                    $iconClass = 'info';
+                    $iconName = 'info';
+                    if ($notif->type === 'danger') {
+                        $iconClass = 'danger';
+                        $iconName = 'alert-triangle';
+                    } elseif ($notif->type === 'warning') {
+                        $iconClass = 'warning';
+                        $iconName = 'alert-circle';
+                    } elseif ($notif->type === 'success') {
+                        $iconClass = 'success';
+                        $iconName = 'check-circle';
+                    }
+                @endphp
 
+                <div class="notif-icon {{ $iconClass }}">
+                    <i data-feather="{{ $iconName }}"></i>
+                </div>
+                <div class="notif-content">
+                    <h4>{{ $notif->title }}</h4>
+                    <p>{{ $notif->message }}</p>
+                    <span class="notif-time" title="{{ $notif->created_at->format('d M Y H:i') }}">
+                        {{ $notif->created_at->diffForHumans() }}
+                    </span>
+                </div>
+            </div>
+        @empty
+            <div class="notif-empty">
+                <i data-feather="bell-off"></i>
+                <p>Tidak ada notifikasi saat ini.</p>
+            </div>
+        @endforelse
     </main>
 @endsection
 

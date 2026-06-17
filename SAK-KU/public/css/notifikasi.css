@@ -166,3 +166,57 @@ body {
     color: var(--text-secondary);
     opacity: 0.8;
 }
+
+/* Custom Added Rules */
+.warning {
+    background-color: rgba(255, 152, 0, 0.1);
+    color: #FF9800;
+}
+
+.notif-header-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.read-all-btn {
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+}
+
+.read-all-btn:hover {
+    opacity: 0.8;
+}
+
+.read-all-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.notif-empty {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.notif-empty svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.notif-empty p {
+    font-size: 15px;
+}
