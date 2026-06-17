@@ -2,26 +2,29 @@
 const themeToggle = document.getElementById('themeToggle');
 
 function updateToggleButton() {
-    if (document.body.classList.contains('dark-mode')) {
-        themeToggle.innerHTML = '<i data-feather="sun"></i>';
-    } else {
-        themeToggle.innerHTML = '<i data-feather="moon"></i>';
+    if (!themeToggle) return;
+    
+    const isDark = document.body.classList.contains('dark-mode');
+    const currentIcon = themeToggle.querySelector('svg')?.getAttribute('data-feather') || themeToggle.querySelector('i')?.getAttribute('data-feather');
+    const expectedIcon = isDark ? 'sun' : 'moon';
+    
+    if (currentIcon !== expectedIcon) {
+        themeToggle.innerHTML = `<i data-feather="${expectedIcon}"></i>`;
+        feather.replace();
     }
-    feather.replace(); 
 }
-
-const savedTheme = localStorage.getItem("sakku-theme");
-if (savedTheme === "dark") { document.body.classList.add("dark-mode"); } 
-else if (savedTheme === "light") { document.body.classList.remove("dark-mode"); }
 
 updateToggleButton();
 
-themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    let currentTheme = document.body.classList.contains('dark-mode') ? "dark" : "light";
-    localStorage.setItem("sakku-theme", currentTheme);
-    updateToggleButton();
-});
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        let currentTheme = document.body.classList.contains('dark-mode') ? "dark" : "light";
+        localStorage.setItem("sakku-theme", currentTheme);
+        document.cookie = "theme_mode=" + currentTheme + "; path=/; max-age=" + (365*24*60*60);
+        updateToggleButton();
+    });
+}
 
 // --- 2. LOGIKA BOTTOM SHEET DINAMIS ---
 const bottomSheet = document.getElementById('bottomSheet');
@@ -70,7 +73,6 @@ function openBottomSheet(type) {
 
 function openDetailSheet(id, nama, saldo, target, tipe) {
     document.getElementById('editNama').value = nama;
-    document.getElementById('editSaldo').value = saldo;
     
     document.getElementById('formEditKantong').action = '/kantong/' + id;
     document.getElementById('formDeleteKantong').action = '/kantong/' + id;
@@ -185,4 +187,51 @@ function toggleTransaksiFormType(isPemasukan) {
         }
     }
     alokasiSelect.selectedIndex = 0;
+}
+
+function toggleExpandList(type) {
+    const containerId = type === 'pocket' ? 'pocketListContainer' : 'savingsListContainer';
+    const buttonId = type === 'pocket' ? 'btnExpandPocket' : 'btnExpandSavings';
+    const container = document.getElementById(containerId);
+    const button = document.getElementById(buttonId);
+    
+    const items = container.querySelectorAll(type === 'pocket' ? '.pocket-card-item' : '.savings-card-item');
+    
+    let isCurrentlyCollapsed = false;
+    items.forEach(item => {
+        const index = parseInt(item.getAttribute('data-index'));
+        if (index >= 3 && (item.style.display === 'none' || item.style.getPropertyValue('display') === 'none')) {
+            isCurrentlyCollapsed = true;
+        }
+    });
+
+    if (isCurrentlyCollapsed) {
+        items.forEach(item => {
+            const index = parseInt(item.getAttribute('data-index'));
+            if (index >= 3) {
+                item.style.setProperty('display', 'flex', 'important');
+            }
+        });
+        button.innerHTML = 'Lihat Lebih Sedikit <i data-feather="chevron-up" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"></i>';
+    } else {
+        items.forEach(item => {
+            const index = parseInt(item.getAttribute('data-index'));
+            if (index >= 3) {
+                item.style.setProperty('display', 'none', 'important');
+            }
+        });
+        button.innerHTML = 'Lihat Selengkapnya <i data-feather="chevron-down" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"></i>';
+    }
+    feather.replace();
+}
+
+// Logout Confirmation
+const btnLogout = document.getElementById('btnLogout');
+if (btnLogout) {
+    btnLogout.addEventListener('click', () => {
+        const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari aplikasi sak-ku?");
+        if (konfirmasi) {
+            window.location.href = '/'; 
+        }
+    });
 }

@@ -17,7 +17,8 @@ class Alokasi extends Model
     protected $fillable = [
         'nama', 
         'target_nominal', 
-        'is_tabungan'
+        'is_tabungan',
+        'sort_order'
     ];
 
     // Opsional: Memastikan is_tabungan dibaca sebagai boolean

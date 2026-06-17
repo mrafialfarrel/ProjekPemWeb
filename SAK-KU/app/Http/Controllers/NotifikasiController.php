@@ -13,14 +13,8 @@ class NotifikasiController extends Controller
      */
     public function index()
     {
-        // 1. Sebelum menampilkan halaman, kita cek dulu progres Alokasi
-        // Ini setara dengan fungsi checkAndGeneratePocketNotifications() di Kotlin
-        $this->generateProgressNotifications();
-
-        // 2. Tarik semua notifikasi, urutkan dari yang terbaru (menggantikan timestamp: Long)
-        $notifikasi = Notifikasi::orderBy('created_at', 'desc')->get();
-
-        return view('notification.index', compact('notifikasi'));
+        Notifikasi::generateProgressNotifications();
+        return redirect('/dashboard');
     }
 
     /**

@@ -14,7 +14,27 @@
             </button>
             <h1>Alokasi & Transaksi</h1>
             <div class="nav-actions">
-                <button class="icon-btn" id="themeToggle"></button>
+                <button class="icon-btn" id="themeToggle" title="Ubah Tema">
+                    @if(request()->cookie('theme_mode', 'light') === 'dark')
+                        <i data-feather="sun"></i>
+                    @else
+                        <i data-feather="moon"></i>
+                    @endif
+                </button>
+                <script>
+                    (function() {
+                        const savedTheme = localStorage.getItem("sakku-theme");
+                        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+                        const isDark = savedTheme === "dark" || (!savedTheme && prefersDarkScheme.matches);
+                        const toggle = document.getElementById('themeToggle');
+                        if (toggle) {
+                            toggle.innerHTML = isDark ? '<i data-feather="sun"></i>' : '<i data-feather="moon"></i>';
+                        }
+                    })();
+                </script>
+                <button class="icon-btn" id="btnLogout" title="Keluar">
+                    <i data-feather="log-out"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -34,20 +54,72 @@
                     </div>
                     
                     @if(isset($list_kantong))
-                        @forelse($list_kantong as $index => $k)
-                        <div class="pocket-item" onclick="openDetailSheet('{{ $k->id }}', '{{ $k->nama }}', '{{ $k->saldo }}', 0, 'kantong')">
-                            <div class="pocket-number">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
-                            <div class="pocket-info">
-                                <h4>{{ $k->nama }}</h4>
-                                <p>Kantong Utama</p>
+                        <div id="pocketListContainer" style="display: flex; flex-direction: column;">
+                            @forelse($list_kantong as $index => $k)
+                            <div class="pocket-item pocket-card-item" 
+                                 data-index="{{ $index }}"
+                                 onclick="openDetailSheet('{{ $k->id }}', '{{ $k->nama }}', '{{ $k->saldo }}', '{{ $k->target_nominal }}', 'kantong')" 
+                                 style="flex-direction: column; align-items: stretch; gap: 10px; @if($index >= 3) display: none !important; @endif">
+                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                        <div class="pocket-number" style="width: auto; gap: 5px; flex-shrink: 0; display: flex; align-items: center;">
+                                            {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                                            <div style="display: flex; flex-direction: column; align-items: center; margin-left: 2px;">
+                                                <form action="{{ url('/kantong/' . $k->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();">
+                                                    @csrf
+                                                    <input type="hidden" name="direction" value="up">
+                                                    <button type="submit" style="background: none; border: none; padding: 0; margin: 0; color: var(--text-secondary); cursor: pointer;" title="Pindahkan Ke Atas">
+                                                        <i data-feather="chevron-up" style="width: 14px; height: 14px;"></i>
+                                                    </button>
+                                                </form>
+                                                <form action="{{ url('/kantong/' . $k->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();">
+                                                    @csrf
+                                                    <input type="hidden" name="direction" value="down">
+                                                    <button type="submit" style="background: none; border: none; padding: 0; margin: 0; color: var(--text-secondary); cursor: pointer;" title="Pindahkan Ke Bawah">
+                                                        <i data-feather="chevron-down" style="width: 14px; height: 14px;"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="pocket-info">
+                                            <h4>{{ $k->nama }}</h4>
+                                            <p>Kantong Utama</p>
+                                        </div>
+                                    </div>
+                                    <div class="pocket-balance">
+                                        <h4>Rp {{ number_format(abs($k->saldo), 0, ',', '.') }}</h4>
+                                    </div>
+                                </div>
+                                
+                                @if($k->target_nominal > 0)
+                                    <div class="goal-area" style="border-top: 1px dashed var(--border-color); padding-top: 10px; width: 100%;">
+                                        <div class="goal-stats" style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 5px;">
+                                            <span>Terpakai: <strong>Rp {{ number_format($k->terpakai, 0, ',', '.') }}</strong></span>
+                                            <span>Batas: Rp {{ number_format($k->target_nominal, 0, ',', '.') }}</span>
+                                        </div>
+                                        
+                                        @php 
+                                            $persen = ($k->terpakai / $k->target_nominal) * 100;
+                                            $isOverLimit = $persen >= 100;
+                                            $persen = $persen > 100 ? 100 : ($persen < 0 ? 0 : $persen);
+                                        @endphp
+                                        
+                                        <div class="progress-track">
+                                            <div class="progress-fill" style="width: {{ $persen }}%;{{ $isOverLimit ? ' background: #f44336;' : '' }}"></div>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
-                            <div class="pocket-balance">
-                                <h4>Rp {{ number_format($k->saldo, 0, ',', '.') }}</h4>
-                            </div>
+                            @empty
+                            <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin: 15px 0;">Belum ada kantong.</p>
+                            @endforelse
                         </div>
-                        @empty
-                        <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin: 15px 0;">Belum ada kantong.</p>
-                        @endforelse
+                        
+                        @if(count($list_kantong) > 3)
+                            <button id="btnExpandPocket" class="expand-btn" onclick="toggleExpandList('pocket')">
+                                Lihat Selengkapnya <i data-feather="chevron-down" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"></i>
+                            </button>
+                        @endif
                     @endif
 
                     <button class="section-action-btn" onclick="openBottomSheet('Kantong')">
@@ -62,33 +134,62 @@
                     </div>
 
                     @if(isset($list_tabungan))
-                        @forelse($list_tabungan as $index => $t)
-                        <div class="savings-item" onclick="openDetailSheet('{{ $t->id }}', '{{ $t->nama }}', '{{ $t->saldo }}', '{{ $t->target_nominal }}', 'tabungan')">
-                            <div class="savings-header">
-                                <div class="pocket-number">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
-                                <div class="pocket-info">
-                                    <h4>{{ $t->nama }}</h4>
-                                    <p>Target: Rp {{ number_format($t->target_nominal, 0, ',', '.') }}</p>
+                        <div id="savingsListContainer" style="display: flex; flex-direction: column;">
+                            @forelse($list_tabungan as $index => $t)
+                            <div class="savings-item savings-card-item" 
+                                 data-index="{{ $index }}"
+                                 onclick="openDetailSheet('{{ $t->id }}', '{{ $t->nama }}', '{{ $t->saldo }}', '{{ $t->target_nominal }}', 'tabungan')"
+                                 style="@if($index >= 3) display: none !important; @endif">
+                                <div class="savings-header">
+                                    <div class="pocket-number" style="width: auto; gap: 5px; flex-shrink: 0; display: flex; align-items: center;">
+                                        {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                                        <div style="display: flex; flex-direction: column; align-items: center; margin-left: 2px;">
+                                            <form action="{{ url('/kantong/' . $t->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();">
+                                                @csrf
+                                                <input type="hidden" name="direction" value="up">
+                                                <button type="submit" style="background: none; border: none; padding: 0; margin: 0; color: var(--text-secondary); cursor: pointer;" title="Pindahkan Ke Atas">
+                                                    <i data-feather="chevron-up" style="width: 14px; height: 14px;"></i>
+                                                </button>
+                                            </form>
+                                            <form action="{{ url('/kantong/' . $t->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();">
+                                                @csrf
+                                                <input type="hidden" name="direction" value="down">
+                                                <button type="submit" style="background: none; border: none; padding: 0; margin: 0; color: var(--text-secondary); cursor: pointer;" title="Pindahkan Ke Bawah">
+                                                    <i data-feather="chevron-down" style="width: 14px; height: 14px;"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="pocket-info">
+                                        <h4>{{ $t->nama }}</h4>
+                                        <p>Target: Rp {{ number_format($t->target_nominal, 0, ',', '.') }}</p>
+                                    </div>
+                                </div>
+                                <div class="goal-area">
+                                    <div class="goal-stats">
+                                        <span>Terkumpul: <strong>Rp {{ number_format($t->saldo, 0, ',', '.') }}</strong></span>
+                                    </div>
+                                    
+                                    @php 
+                                        $persen = $t->target_nominal > 0 ? ($t->saldo / $t->target_nominal) * 100 : 0; 
+                                        $persen = $persen > 100 ? 100 : ($persen < 0 ? 0 : $persen);
+                                    @endphp
+                                    
+                                    <div class="progress-track">
+                                        <div class="progress-fill" style="width: {{ $persen }}%;"></div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="goal-area">
-                                <div class="goal-stats">
-                                    <span>Terkumpul: <strong>Rp {{ number_format($t->saldo, 0, ',', '.') }}</strong></span>
-                                </div>
-                                
-                                @php 
-                                    $persen = $t->target_nominal > 0 ? ($t->saldo / $t->target_nominal) * 100 : 0; 
-                                    $persen = $persen > 100 ? 100 : ($persen < 0 ? 0 : $persen);
-                                @endphp
-                                
-                                <div class="progress-track">
-                                    <div class="progress-fill" style="width: {{ $persen }}%;"></div>
-                                </div>
-                            </div>
+                            @empty
+                            <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin: 15px 0;">Belum ada tabungan.</p>
+                            @endforelse
                         </div>
-                        @empty
-                        <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin: 15px 0;">Belum ada tabungan.</p>
-                        @endforelse
+                        
+                        @if(count($list_tabungan) > 3)
+                            <button id="btnExpandSavings" class="expand-btn" onclick="toggleExpandList('savings')">
+                                Lihat Selengkapnya <i data-feather="chevron-down" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"></i>
+                            </button>
+                        @endif
                     @endif
 
                     <button class="section-action-btn" onclick="openBottomSheet('Tabungan')">
@@ -102,9 +203,6 @@
         <div class="column-card">
             <div class="column-header">
                 <h2><i data-feather="file-text" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;"></i> Riwayat Transaksi Terbaru</h2>
-                <button class="icon-btn" onclick="openBottomSheet('Transaksi')" style="color: var(--primary-color);" title="Tambah Transaksi">
-                    <i data-feather="plus-circle" style="width: 24px; height: 24px;"></i>
-                </button>
             </div>
             
             <div class="column-body">
@@ -212,7 +310,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="save-btn" id="btnSimpanTransaksi" style="background-color: var(--primary-color); color: white; border-radius: 20px; font-weight: bold; border: none; padding: 14px; font-size: 16px;">Simpan Transaksi</button>
+                    <button type="submit" class="save-btn" id="btnSimpanTransaksi">Simpan Transaksi</button>
                 </form>
             </div>
 
@@ -240,7 +338,7 @@
                         <input type="number" name="target_nominal" id="inputAlokasiTarget" class="form-input" placeholder="Target Tabungan (Rp)" required />
                     </div>
                     
-                    <button type="submit" class="save-btn" style="background-color: var(--primary-color); color: white; border-radius: 20px; font-weight: bold; border: none; padding: 14px; font-size: 16px;">Simpan</button>
+                    <button type="submit" class="save-btn">Simpan</button>
                 </form>
             </div>
 
@@ -254,23 +352,18 @@
                         <input type="text" name="nama" id="editNama" class="form-input" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Ubah Saldo Saat Ini (Melalui Transaksi Penyesuaian)</label>
-                        <input type="number" name="saldo" class="form-input" id="editSaldo" required />
-                    </div>
-
                     <div class="form-group" id="groupTarget" style="display: none;">
                         <label id="editTargetLabel">Target Nominal / Batas</label>
                         <input type="number" name="target_nominal" id="editTarget" class="form-input">
                     </div>
                     
-                    <button type="submit" class="save-btn" style="margin-bottom: 10px; border-radius: 20px; font-weight: bold; padding: 14px;">Simpan Perubahan</button>
+                    <button type="submit" class="save-btn" style="margin-bottom: 10px;">Simpan Perubahan</button>
                 </form>
 
                 <form id="formDeleteKantong" action="" method="POST" onsubmit="return confirm('Apakah kamu yakin ingin menghapus alokasi ini? Histori transaksi alokasi ini akan tetap disimpan.')">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="save-btn" style="background-color: #e53935; margin-bottom: 25px; border-radius: 20px; font-weight: bold; padding: 14px;">Hapus Alokasi</button>
+                    <button type="submit" class="save-btn" style="background: #e53935; margin-bottom: 25px;">Hapus Alokasi</button>
                 </form>
             </div>
 

@@ -22,6 +22,7 @@ Route::get('/kantong', [AlokasiController::class, 'index']);
 Route::post('/kantong', [AlokasiController::class, 'store']); 
 Route::put('/kantong/{id}', [AlokasiController::class, 'update']); 
 Route::delete('/kantong/{id}', [AlokasiController::class, 'destroy']); 
+Route::post('/kantong/{id}/move', [AlokasiController::class, 'move']); 
 
 // 4. Transaksi
 Route::get('/transaksi', [TransaksiController::class, 'index']); 

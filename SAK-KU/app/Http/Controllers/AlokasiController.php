@@ -14,8 +14,8 @@ class AlokasiController extends Controller
      */
     public function index()
     {
-        // Tarik semua Alokasi sekaligus riwayat transaksinya dari Database
-        $semuaAlokasi = Alokasi::with('transaksi')->get();
+        // Tarik semua Alokasi sekaligus riwayat transaksinya dari Database, urutkan berdasarkan sort_order
+        $semuaAlokasi = Alokasi::with('transaksi')->orderBy('sort_order', 'asc')->orderBy('created_at', 'asc')->get();
 
         $list_kantong = collect();
         $list_tabungan = collect();
@@ -67,10 +67,13 @@ class AlokasiController extends Controller
         $target = $request->input('target_nominal') ?? $request->input('target') ?? 0;
         $isTabungan = $request->input('is_tabungan') == '1' || ($request->has('tipe') && $request->tipe === 'tabungan');
 
+        $maxSortOrder = Alokasi::where('is_tabungan', $isTabungan)->max('sort_order') ?? 0;
+
         $alokasi = Alokasi::create([
             'nama'           => $nama,
             'target_nominal' => $target, 
-            'is_tabungan'    => $isTabungan
+            'is_tabungan'    => $isTabungan,
+            'sort_order'     => $maxSortOrder + 1
         ]);
 
         // Inisiasi Saldo Awal sebagai Transaksi Pemasukan
@@ -104,22 +107,6 @@ class AlokasiController extends Controller
             'target_nominal' => $target,
         ]);
 
-        // Jika user mengubah saldo pada modal edit, sesuaikan saldonya secara akuntansi
-        if ($request->has('saldo')) {
-            $newSaldo = $request->input('saldo');
-            $currentSaldo = $alokasi->transaksi->where('is_pemasukan', true)->sum('nominal') - $alokasi->transaksi->where('is_pemasukan', false)->sum('nominal');
-            $difference = $newSaldo - $currentSaldo;
-            if ($difference != 0) {
-                $alokasi->transaksi()->create([
-                    'keterangan'   => 'Penyesuaian Saldo',
-                    'nominal'      => abs($difference),
-                    'is_pemasukan' => $difference > 0,
-                    'kategori'     => 'Penyesuaian',
-                    'tanggal'      => now(),
-                ]);
-            }
-        }
-
         return back();
     }
 
@@ -134,6 +121,69 @@ class AlokasiController extends Controller
         // Menghapus data kantong. Karena ada nullOnDelete() di database, 
         // histori transaksinya akan tetap ada tanpa alokasi_id.
         $alokasi->delete();
+
+        return back();
+    }
+
+    /**
+     * Memindahkan urutan alokasi (up / down)
+     */
+    public function move(Request $request, $id)
+    {
+        $alokasi = Alokasi::findOrFail($id);
+        $direction = $request->input('direction'); // 'up' or 'down'
+        $isTabungan = $alokasi->is_tabungan;
+
+        // Ambil semua alokasi dengan tipe yang sama diurutkan berdasarkan sort_order
+        $items = Alokasi::where('is_tabungan', $isTabungan)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Cari index item saat ini
+        $index = $items->search(function ($item) use ($id) {
+            return $item->id === $id;
+        });
+
+        if ($index !== false) {
+            if ($direction === 'up' && $index > 0) {
+                $swapWith = $items[$index - 1];
+                $temp = $alokasi->sort_order;
+                
+                if ($temp == $swapWith->sort_order) {
+                    $alokasi->sort_order = $temp - 1;
+                } else {
+                    $alokasi->sort_order = $swapWith->sort_order;
+                    $swapWith->sort_order = $temp;
+                }
+                
+                $alokasi->save();
+                $swapWith->save();
+            } elseif ($direction === 'down' && $index < count($items) - 1) {
+                $swapWith = $items[$index + 1];
+                $temp = $alokasi->sort_order;
+                
+                if ($temp == $swapWith->sort_order) {
+                    $alokasi->sort_order = $temp + 1;
+                } else {
+                    $alokasi->sort_order = $swapWith->sort_order;
+                    $swapWith->sort_order = $temp;
+                }
+                
+                $alokasi->save();
+                $swapWith->save();
+            }
+
+            // Normalisasi urutan agar tersusun rapi dari 0, 1, 2, ...
+            $items = Alokasi::where('is_tabungan', $isTabungan)
+                ->orderBy('sort_order', 'asc')
+                ->orderBy('created_at', 'asc')
+                ->get();
+            foreach ($items as $idx => $item) {
+                $item->sort_order = $idx;
+                $item->save();
+            }
+        }
 
         return back();
     }
