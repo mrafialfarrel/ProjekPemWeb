@@ -50,8 +50,11 @@ class AlokasiController extends Controller
             }
         }
 
+        // Tarik semua transaksi, diurutkan dari yang terbaru
+        $transaksi = Transaksi::with('alokasi')->orderBy('tanggal', 'desc')->get();
+
         // Kirim data yang sudah diolah ke UI Blade
-        return view('allocation.index', compact('list_kantong', 'list_tabungan', 'total_kekayaan'));
+        return view('allocation.index', compact('list_kantong', 'list_tabungan', 'total_kekayaan', 'transaksi', 'semuaAlokasi'));
     }
 
     /**
@@ -60,19 +63,22 @@ class AlokasiController extends Controller
      */
     public function store(Request $request)
     {
-        $isTabungan = $request->has('tipe') && $request->tipe === 'tabungan';
+        $nama = $request->input('nama') ?? $request->input('nama_kantong');
+        $target = $request->input('target_nominal') ?? $request->input('target') ?? 0;
+        $isTabungan = $request->input('is_tabungan') == '1' || ($request->has('tipe') && $request->tipe === 'tabungan');
 
         $alokasi = Alokasi::create([
-            'nama'           => $request->nama_kantong,
-            'target_nominal' => $request->target ?? 0, 
+            'nama'           => $nama,
+            'target_nominal' => $target, 
             'is_tabungan'    => $isTabungan
         ]);
 
-        // Inisiasi Saldo Awal sebagai Transaksi Pemasukan (Opsional, tergantung UI form)
-        if ($request->filled('saldo') && $request->saldo > 0) {
+        // Inisiasi Saldo Awal sebagai Transaksi Pemasukan
+        $saldoAwal = $request->input('saldo_awal') ?? $request->input('saldo') ?? 0;
+        if ($saldoAwal > 0) {
             $alokasi->transaksi()->create([
                 'keterangan'   => 'Saldo Awal',
-                'nominal'      => $request->saldo,
+                'nominal'      => $saldoAwal,
                 'is_pemasukan' => true,
                 'kategori'     => 'Penyesuaian',
                 'tanggal'      => now(), 
@@ -90,10 +96,29 @@ class AlokasiController extends Controller
     {
         $alokasi = Alokasi::findOrFail($id);
         
+        $nama = $request->input('nama') ?? $request->input('nama_kantong') ?? $alokasi->nama;
+        $target = $request->input('target_nominal') ?? $request->input('target') ?? $alokasi->target_nominal;
+
         $alokasi->update([
-            'nama'           => $request->nama_kantong ?? $alokasi->nama,
-            'target_nominal' => $request->target ?? $alokasi->target_nominal,
+            'nama'           => $nama,
+            'target_nominal' => $target,
         ]);
+
+        // Jika user mengubah saldo pada modal edit, sesuaikan saldonya secara akuntansi
+        if ($request->has('saldo')) {
+            $newSaldo = $request->input('saldo');
+            $currentSaldo = $alokasi->transaksi->where('is_pemasukan', true)->sum('nominal') - $alokasi->transaksi->where('is_pemasukan', false)->sum('nominal');
+            $difference = $newSaldo - $currentSaldo;
+            if ($difference != 0) {
+                $alokasi->transaksi()->create([
+                    'keterangan'   => 'Penyesuaian Saldo',
+                    'nominal'      => abs($difference),
+                    'is_pemasukan' => $difference > 0,
+                    'kategori'     => 'Penyesuaian',
+                    'tanggal'      => now(),
+                ]);
+            }
+        }
 
         return back();
     }

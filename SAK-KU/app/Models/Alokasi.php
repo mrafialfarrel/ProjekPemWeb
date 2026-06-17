@@ -38,8 +38,8 @@ class Alokasi extends Model
      */
     public function getSaldoAttribute()
     {
-        $masuk = $this->transaksi->where('jenis', 'masuk')->sum('nominal');
-        $keluar = $this->transaksi->where('jenis', 'keluar')->sum('nominal');
+        $masuk = $this->transaksi->where('is_pemasukan', true)->sum('nominal');
+        $keluar = $this->transaksi->where('is_pemasukan', false)->sum('nominal');
         
         return $masuk - $keluar;
     }

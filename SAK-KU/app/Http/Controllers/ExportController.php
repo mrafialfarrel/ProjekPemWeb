@@ -6,6 +6,7 @@ use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ExportController extends Controller
 {
@@ -68,17 +69,22 @@ class ExportController extends Controller
      */
     private function generatePdf($transactions, $rentang)
     {
-        /*
-         * PENTING: Di Laravel, kita jarang menggambar canvas PDF baris-demi-baris seperti di Android (drawText).
-         * Praktik terbaik Laravel adalah membuat file HTML biasa (misal: resources/views/export/pdf.blade.php),
-         * lalu mengubah HTML tersebut menjadi PDF menggunakan package tambahan.
-         */
-         
-        // Contoh jika Anda sudah menginstall library dompdf:
-        // $pdf = Pdf::loadView('export.pdf_template', compact('transactions', 'rentang'));
-        // return $pdf->download("Laporan_Keuangan_$rentang.pdf");
+        $rentangNama = match ($rentang) {
+            '1w', '1 Minggu Terakhir' => '1 Minggu Terakhir',
+            '2w', '2 Minggu Terakhir' => '2 Minggu Terakhir',
+            '1m', '1 Bulan Terakhir'   => '1 Bulan Terakhir',
+            '3m', '3 Bulan Terakhir'   => '3 Bulan Terakhir',
+            'all', 'Semua Riwayat'     => 'Semua Riwayat',
+            default                    => $rentang
+        };
+
+        $totalIncome = $transactions->where('is_pemasukan', true)->sum('nominal');
+        $totalExpense = $transactions->where('is_pemasukan', false)->sum('nominal');
+
+        $pdf = Pdf::loadView('export.pdf_template', compact('transactions', 'rentangNama', 'totalIncome', 'totalExpense'));
         
-        return back()->with('info', 'Fitur PDF memerlukan package seperti barryvdh/laravel-dompdf untuk dirender dari HTML.');
+        $filename = "Laporan_Keuangan_SAKKU_" . date('Ymd_His') . ".pdf";
+        return $pdf->download($filename);
     }
 
     private function getTimeLimit($filter)

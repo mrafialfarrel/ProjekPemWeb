@@ -29,13 +29,17 @@ class DashboardController extends Controller
         $selectedTheme = request()->cookie('theme_mode', 'system');
         $isNotificationEnabled = request()->cookie('notification_enabled', true);
 
+        // 4. Hitung jumlah notifikasi belum dibaca
+        $unreadNotificationsCount = \App\Models\Notifikasi::where('is_read', false)->count();
+
         return view('dashboard.index', compact(
             'totalSaldo', 
             'totalPemasukan', 
             'totalPengeluaran', 
             'recentTransactions',
             'selectedTheme',
-            'isNotificationEnabled'
+            'isNotificationEnabled',
+            'unreadNotificationsCount'
         ));
     }
 

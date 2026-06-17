@@ -9,24 +9,11 @@ use Illuminate\Http\Request;
 class TransaksiController extends Controller
 {
     /**
-     * READ (Setara dengan UI State initialization di ViewModel)
-     * Mengambil daftar transaksi dan daftar pilihan kantong/tabungan
+     * Redirect to unified page
      */
     public function index()
     {
-        // 1. Ambil semua transaksi, diurutkan dari yang terbaru (mirip ORDER BY tanggal DESC di DAO)
-        // Kita gunakan with('alokasi') agar bisa menampilkan nama kantongnya di UI nanti
-        $transactions = Transaksi::with('alokasi')->orderBy('tanggal', 'desc')->get();
-
-        // 2. Ambil semua alokasi untuk dropdown form
-        $semuaAlokasi = Alokasi::all();
-
-        // 3. Pisahkan menjadi Kantong dan Tabungan (Setara dengan listKantong & listTabungan di ViewModel)
-        $listKantong = $semuaAlokasi->where('is_tabungan', false);
-        $listTabungan = $semuaAlokasi->where('is_tabungan', true);
-
-        // Kirim state ini ke view
-        return view('transaction.index', compact('transactions', 'listKantong', 'listTabungan'));
+        return redirect('/kantong');
     }
 
     /**
@@ -34,19 +21,24 @@ class TransaksiController extends Controller
      */
     public function store(Request $request)
     {
-        // Konversi input string dari HTML select ke boolean
-        $isPemasukan = $request->jenis === 'masuk';
+        $isPemasukan = false;
+        if ($request->has('jenis')) {
+            $isPemasukan = $request->jenis === 'masuk';
+        } elseif ($request->has('is_pemasukan')) {
+            $isPemasukan = $request->is_pemasukan == '1';
+        }
+
+        $alokasiId = $request->input('alokasi_id') ?? $request->input('kantong_id');
 
         Transaksi::create([
-            'alokasi_id'   => $request->kantong_id, // UUID dari dropdown <select>
+            'alokasi_id'   => $alokasiId,
             'keterangan'   => $request->keterangan ?? 'Tanpa Keterangan',
             'nominal'      => $request->nominal,
             'is_pemasukan' => $isPemasukan,
             'kategori'     => $request->kategori ?? 'Umum',
-            'tanggal'      => now(), // Setara dengan System.currentTimeMillis() di Kotlin
+            'tanggal'      => now(),
         ]);
 
-        // Setelah sukses menyimpan, refresh halaman
         return back()->with('success', 'Transaksi berhasil ditambahkan!');
     }
 
@@ -55,17 +47,22 @@ class TransaksiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Cari transaksi berdasarkan UUID
         $transaksi = Transaksi::findOrFail($id);
 
-        $isPemasukan = $request->jenis === 'masuk';
+        $isPemasukan = $transaksi->is_pemasukan;
+        if ($request->has('jenis')) {
+            $isPemasukan = $request->jenis === 'masuk';
+        } elseif ($request->has('is_pemasukan')) {
+            $isPemasukan = $request->is_pemasukan == '1';
+        }
 
-        // Update nilainya. Jika form tidak mengirimkan data baru, gunakan data lama
+        $alokasiId = $request->input('alokasi_id') ?? $request->input('kantong_id') ?? $transaksi->alokasi_id;
+
         $transaksi->update([
-            'alokasi_id'   => $request->kantong_id ?? $transaksi->alokasi_id,
+            'alokasi_id'   => $alokasiId,
             'keterangan'   => $request->keterangan ?? $transaksi->keterangan,
             'nominal'      => $request->nominal ?? $transaksi->nominal,
-            'is_pemasukan' => $request->has('jenis') ? $isPemasukan : $transaksi->is_pemasukan,
+            'is_pemasukan' => $isPemasukan,
             'kategori'     => $request->kategori ?? $transaksi->kategori,
         ]);
 
@@ -81,15 +78,5 @@ class TransaksiController extends Controller
         $transaksi->delete();
 
         return back()->with('success', 'Transaksi berhasil dihapus!');
-    }
-    public function index()
-    {
-        // Mengambil transaksi urut dari yang terbaru
-        $transaksi = Transaksi::with('alokasi')->latest('tanggal')->get();
-        
-        // Mengambil daftar dompet/tabungan untuk form pilihan
-        $list_alokasi = Alokasi::all();
-
-        return view('transaction.index', compact('transaksi', 'list_alokasi'));
     }
 }

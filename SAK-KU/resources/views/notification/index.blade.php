@@ -45,7 +45,7 @@
             @endif
 
             <div class="notif-item {{ $notif->is_read ? '' : 'unread' }}" 
-                 @if(!$notif->is_read) onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notif->id }}').submit();" @endif>
+                 @if(!$notif->is_read) onclick="document.getElementById('mark-read-{{ $notif->id }}').submit();" @endif>
                 
                 @php
                     $iconClass = 'info';

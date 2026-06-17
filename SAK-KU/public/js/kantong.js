@@ -29,62 +29,72 @@ const bottomSheetOverlay = document.getElementById('bottomSheetOverlay');
 const sheetTitle = document.getElementById('sheetTitle');
 
 const formTransaksi = document.getElementById('formTransaksi');
-const formKantong = document.getElementById('formKantong');
-const formTabungan = document.getElementById('formTabungan');
+const formAlokasi = document.getElementById('formAlokasi');
 const formDetail = document.getElementById('formDetail');
-const detailBalanceInput = document.getElementById('detailBalanceInput');
 
 function openBottomSheet(type) {
     formTransaksi.style.display = 'none';
-    formKantong.style.display = 'none';
-    formTabungan.style.display = 'none';
+    formAlokasi.style.display = 'none';
     formDetail.style.display = 'none';
 
     if (type === 'Transaksi') {
-        sheetTitle.innerText = 'Transaksi Baru';
+        const form = document.getElementById('transaksiSubmitForm');
+        const methodInput = document.getElementById('transaksiFormMethod');
+        form.action = '/transaksi';
+        methodInput.value = 'POST';
+        sheetTitle.innerText = 'Tambah Transaksi Baru';
+        form.reset();
+        
+        // Default to Pemasukan state
+        document.getElementById('radioPemasukan').checked = true;
+        toggleTransaksiFormType(1);
+        
         formTransaksi.style.display = 'block';
-    } else if (type === 'Kantong') {
-        sheetTitle.innerText = 'Tambah Kantong Baru';
-        formKantong.style.display = 'block';
-    } else if (type === 'Tabungan') {
-        sheetTitle.innerText = 'Tambah Tabungan Baru';
-        formTabungan.style.display = 'block';
+    } else if (type === 'Kantong' || type === 'Tabungan' || type === 'Alokasi') {
+        sheetTitle.innerText = 'Buat Alokasi Baru';
+        
+        if (type === 'Kantong') {
+            document.getElementById('radioKantong').checked = true;
+            toggleAlokasiFormType('kantong');
+        } else {
+            document.getElementById('radioTabungan').checked = true;
+            toggleAlokasiFormType('tabungan');
+        }
+        
+        formAlokasi.style.display = 'block';
     }
 
     bottomSheetOverlay.classList.add('show');
     bottomSheet.classList.add('show');
 }
 
-// Pastikan parameter di dalam kurung disesuaikan menjadi 5 buah ini
 function openDetailSheet(id, nama, saldo, target, tipe) {
-    
-    // 1. Masukkan data ke input HTML
     document.getElementById('editNama').value = nama;
     document.getElementById('editSaldo').value = saldo;
     
-    // 2. Tembak URL form ke rute yang benar (misal: /kantong/5)
     document.getElementById('formEditKantong').action = '/kantong/' + id;
     document.getElementById('formDeleteKantong').action = '/kantong/' + id;
     
-    // 3. Logika untuk memunculkan input Target khusus Tabungan
     const groupTarget = document.getElementById('groupTarget');
+    const targetLabel = document.getElementById('editTargetLabel');
     if (tipe === 'tabungan') {
         groupTarget.style.display = 'block';
+        targetLabel.innerText = 'Target Tabungan (Rp)';
         document.getElementById('editTarget').value = target;
-        document.getElementById('sheetTitle').innerText = 'Detail Tabungan';
+        sheetTitle.innerText = 'Detail Tabungan';
     } else {
-        groupTarget.style.display = 'none';
-        document.getElementById('sheetTitle').innerText = 'Detail Kantong';
+        groupTarget.style.display = 'block';
+        targetLabel.innerText = 'Batas Kantong (Rp)';
+        document.getElementById('editTarget').value = target;
+        sheetTitle.innerText = 'Detail Kantong';
     }
 
-    // 4. Logika menampilin sheet (pertahankan kode aslimu di bawah ini)
-    document.getElementById('formTransaksi').style.display = 'none';
-    document.getElementById('formKantong').style.display = 'none';
-    document.getElementById('formTabungan').style.display = 'none';
-    document.getElementById('formDetail').style.display = 'block'; // Tampilkan form detail
+    formTransaksi.style.display = 'none';
+    formAlokasi.style.display = 'none';
+    formDetail.style.display = 'block';
     
-    document.getElementById('bottomSheet').classList.add('show');
-    document.getElementById('bottomSheetOverlay').classList.add('show');
+    bottomSheet.classList.add('show');
+    bottomSheetOverlay.classList.add('show');
 }
 
 function closeBottomSheet() {
@@ -92,32 +102,87 @@ function closeBottomSheet() {
     bottomSheetOverlay.classList.remove('show');
 }
 
-// --- 3. LOGIKA TOMBOL EDIT & HAPUS TRANSAKSI ---
+// --- 3. LOGIKA EDIT TRANSAKSI ---
+function editTransaksi(id, keterangan, nominal, isPemasukan, kategori, alokasiId) {
+    const form = document.getElementById('transaksiSubmitForm');
+    const methodInput = document.getElementById('transaksiFormMethod');
 
-function editTrx(event) {
-    // Mencegah klik ter-trigger ke elemen lain (meski saat ini tidak ada, ini adalah best practice)
-    event.stopPropagation();
+    form.action = '/transaksi/' + id;
+    methodInput.value = 'PUT';
+    sheetTitle.innerText = 'Edit Transaksi';
+
+    document.getElementById('inputKeterangan').value = keterangan;
+    document.getElementById('inputNominal').value = nominal;
     
-    // Sebagai simulasi, memunculkan popup prompt bawaan browser
-    let nominalBaru = prompt("Masukkan nominal transaksi yang benar (Hanya angka):");
+    if (isPemasukan == 1) {
+        document.getElementById('radioPemasukan').checked = true;
+        toggleTransaksiFormType(1);
+    } else {
+        document.getElementById('radioPengeluaran').checked = true;
+        toggleTransaksiFormType(0);
+    }
     
-    // Mengecek jika user mengisi form prompt dan tidak cancel
-    if (nominalBaru !== null && nominalBaru.trim() !== "") {
-        alert("Sip! Nanti nominal ini akan diupdate ke database: Rp " + nominalBaru);
+    document.getElementById('inputKategoriSelect').value = kategori;
+    document.getElementById('inputAlokasiId').value = alokasiId;
+
+    formTransaksi.style.display = 'block';
+    formAlokasi.style.display = 'none';
+    formDetail.style.display = 'none';
+
+    bottomSheetOverlay.classList.add('show');
+    bottomSheet.classList.add('show');
+}
+
+// --- 4. UTILITY HELPERS FOR DYNAMIC INPUTS ---
+function toggleAlokasiFormType(type) {
+    const namaInput = document.getElementById('inputAlokasiNama');
+    const targetInput = document.getElementById('inputAlokasiTarget');
+    
+    if (type === 'tabungan') {
+        namaInput.placeholder = 'Nama Tabungan (Cth: Beli Mobil)';
+        targetInput.placeholder = 'Target Tabungan (Rp)';
+    } else {
+        namaInput.placeholder = 'Nama Kantong (Cth: Jajan Bulanan)';
+        targetInput.placeholder = 'Batas Kantong (Rp)';
     }
 }
 
-function deleteTrx(event) {
-    event.stopPropagation();
+function toggleTransaksiFormType(isPemasukan) {
+    const kategoriSelect = document.getElementById('inputKategoriSelect');
+    const alokasiSelect = document.getElementById('inputAlokasiId');
     
-    // Meminta konfirmasi sebelum menghapus
-    let konfirmasi = confirm("Apakah kamu yakin ingin menghapus riwayat transaksi ini? Saldo kamu akan ikut tersesuaikan.");
+    kategoriSelect.innerHTML = '';
     
-    if (konfirmasi) {
-        // Mencari elemen pembungkus terdekat (.history-item) dari tombol yang diklik
-        let itemTransaksi = event.currentTarget.closest('.history-item');
-        
-        // Menghapus elemen tersebut dari layar secara instan
-        itemTransaksi.remove();
+    const pemasukanCategories = ['Gaji', 'Investasi', 'Transfer Masuk', 'Penyesuaian', 'Lainnya'];
+    const pengeluaranCategories = ['Makanan & Minuman', 'Transportasi', 'Tagihan & Utilitas', 'Belanja Bulanan', 'Hiburan', 'Lainnya'];
+    
+    const categories = isPemasukan ? pemasukanCategories : pengeluaranCategories;
+    
+    const defaultCatOption = document.createElement('option');
+    defaultCatOption.value = '';
+    defaultCatOption.disabled = true;
+    defaultCatOption.selected = true;
+    defaultCatOption.text = isPemasukan ? 'Kategori Pemasukan' : 'Kategori Pengeluaran';
+    kategoriSelect.appendChild(defaultCatOption);
+    
+    categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.text = cat;
+        kategoriSelect.appendChild(opt);
+    });
+
+    const firstOption = alokasiSelect.options[0];
+    firstOption.text = isPemasukan ? 'Pilih Tabungan' : 'Pilih Kantong';
+    
+    for (let i = 1; i < alokasiSelect.options.length; i++) {
+        const opt = alokasiSelect.options[i];
+        const isTabungan = opt.getAttribute('data-tabungan') === '1';
+        if (isPemasukan) {
+            opt.style.display = isTabungan ? 'block' : 'none';
+        } else {
+            opt.style.display = isTabungan ? 'none' : 'block';
+        }
     }
+    alokasiSelect.selectedIndex = 0;
 }

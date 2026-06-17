@@ -50,15 +50,62 @@ class LaporanController extends Controller
             ->sortByDesc('amount')
             ->values();
 
-        // 6. Generate Data Chart (Opsional: Jika menggunakan Chart.js, data mentah ini bisa di-encode ke JSON di Blade)
-        // Array chart data ini disederhanakan karena Chart.js biasanya memproses grouping tanggal langsung di sisi client (JS)
-        
+        // 6. Generate Data Chart
+        $chartLabels = [];
+        $chartIncomeData = [];
+        $chartExpenseData = [];
+
+        if ($selectedFilter === '1 Minggu') {
+            for ($i = 6; $i >= 0; $i--) {
+                $date = Carbon::today()->subDays($i);
+                $chartLabels[] = $date->locale('id')->isoFormat('dddd');
+                $dayTransactions = $filteredTransactions->filter(function ($t) use ($date) {
+                    return $t->tanggal->isSameDay($date);
+                });
+                $chartIncomeData[] = $dayTransactions->where('is_pemasukan', true)->sum('nominal');
+                $chartExpenseData[] = $dayTransactions->where('is_pemasukan', false)->sum('nominal');
+            }
+        } elseif ($selectedFilter === '1 Bulan' || $selectedFilter === '3 Bulan') {
+            $days = $selectedFilter === '1 Bulan' ? 30 : 90;
+            $step = $days === 90 ? 3 : 1;
+            for ($i = $days - 1; $i >= 0; $i -= $step) {
+                $date = Carbon::today()->subDays($i);
+                $chartLabels[] = $date->locale('id')->isoFormat('D MMM');
+                
+                if ($days === 90) {
+                    $windowTransactions = $filteredTransactions->filter(function ($t) use ($date) {
+                        return $t->tanggal->between($date->clone()->subDays(2), $date);
+                    });
+                } else {
+                    $windowTransactions = $filteredTransactions->filter(function ($t) use ($date) {
+                        return $t->tanggal->isSameDay($date);
+                    });
+                }
+                $chartIncomeData[] = $windowTransactions->where('is_pemasukan', true)->sum('nominal');
+                $chartExpenseData[] = $windowTransactions->where('is_pemasukan', false)->sum('nominal');
+            }
+        } else {
+            $months = $selectedFilter === '6 Bulan' ? 6 : 12;
+            for ($i = $months - 1; $i >= 0; $i--) {
+                $date = Carbon::today()->subMonths($i);
+                $chartLabels[] = $date->locale('id')->isoFormat('MMM Y');
+                $monthTransactions = $filteredTransactions->filter(function ($t) use ($date) {
+                    return $t->tanggal->isSameMonth($date);
+                });
+                $chartIncomeData[] = $monthTransactions->where('is_pemasukan', true)->sum('nominal');
+                $chartExpenseData[] = $monthTransactions->where('is_pemasukan', false)->sum('nominal');
+            }
+        }
+
         return view('report.index', compact(
             'selectedFilter',
             'totalIncome',
             'totalExpense',
             'expenseCategories',
-            'incomeCategories'
+            'incomeCategories',
+            'chartLabels',
+            'chartIncomeData',
+            'chartExpenseData'
         ));
     }
 
