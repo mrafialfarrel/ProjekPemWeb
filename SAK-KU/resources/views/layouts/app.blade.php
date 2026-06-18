@@ -40,6 +40,9 @@
     </script>
     
     <!-- Auth Security JS -->
+    <script>
+        window.isGuest = @json(!Auth::check());
+    </script>
     <script src="{{ asset('js/auth.js') }}"></script>
     
     <!-- Page Specific JavaScript -->

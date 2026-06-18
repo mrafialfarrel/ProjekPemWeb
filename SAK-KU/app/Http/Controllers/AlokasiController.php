@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Alokasi;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AlokasiController extends Controller
 {
@@ -15,7 +16,7 @@ class AlokasiController extends Controller
     public function index()
     {
         // Tarik semua Alokasi sekaligus riwayat transaksinya dari Database, urutkan berdasarkan sort_order
-        $semuaAlokasi = Alokasi::with('transaksi')->orderBy('sort_order', 'asc')->orderBy('created_at', 'asc')->get();
+        $semuaAlokasi = Alokasi::with('transaksi')->where('user_id', Auth::id())->orderBy('sort_order', 'asc')->orderBy('created_at', 'asc')->get();
 
         $list_kantong = collect();
         $list_tabungan = collect();
@@ -51,7 +52,7 @@ class AlokasiController extends Controller
         }
 
         // Tarik semua transaksi, diurutkan dari yang terbaru
-        $transaksi = Transaksi::with('alokasi')->orderBy('tanggal', 'desc')->get();
+        $transaksi = Transaksi::with('alokasi')->where('user_id', Auth::id())->orderBy('tanggal', 'desc')->get();
 
         // Kirim data yang sudah diolah ke UI Blade
         return view('allocation.index', compact('list_kantong', 'list_tabungan', 'total_kekayaan', 'transaksi', 'semuaAlokasi'));
@@ -67,13 +68,14 @@ class AlokasiController extends Controller
         $target = $request->input('target_nominal') ?? $request->input('target') ?? 0;
         $isTabungan = $request->input('is_tabungan') == '1' || ($request->has('tipe') && $request->tipe === 'tabungan');
 
-        $maxSortOrder = Alokasi::where('is_tabungan', $isTabungan)->max('sort_order') ?? 0;
+        $maxSortOrder = Alokasi::where('user_id', Auth::id())->where('is_tabungan', $isTabungan)->max('sort_order') ?? 0;
 
         $alokasi = Alokasi::create([
             'nama'           => $nama,
             'target_nominal' => $target, 
             'is_tabungan'    => $isTabungan,
-            'sort_order'     => $maxSortOrder + 1
+            'sort_order'     => $maxSortOrder + 1,
+            'user_id'        => Auth::id()
         ]);
 
         // Inisiasi Saldo Awal sebagai Transaksi Pemasukan
@@ -85,6 +87,7 @@ class AlokasiController extends Controller
                 'is_pemasukan' => true,
                 'kategori'     => 'Penyesuaian',
                 'tanggal'      => now(), 
+                'user_id'      => Auth::id()
             ]);
         }
 
@@ -97,7 +100,7 @@ class AlokasiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $alokasi = Alokasi::findOrFail($id);
+        $alokasi = Alokasi::where('user_id', Auth::id())->findOrFail($id);
         
         $nama = $request->input('nama') ?? $request->input('nama_kantong') ?? $alokasi->nama;
         $target = $request->input('target_nominal') ?? $request->input('target') ?? $alokasi->target_nominal;
@@ -116,7 +119,7 @@ class AlokasiController extends Controller
      */
     public function destroy($id)
     {
-        $alokasi = Alokasi::findOrFail($id);
+        $alokasi = Alokasi::where('user_id', Auth::id())->findOrFail($id);
         
         // Menghapus data kantong. Karena ada nullOnDelete() di database, 
         // histori transaksinya akan tetap ada tanpa alokasi_id.
@@ -130,12 +133,13 @@ class AlokasiController extends Controller
      */
     public function move(Request $request, $id)
     {
-        $alokasi = Alokasi::findOrFail($id);
+        $alokasi = Alokasi::where('user_id', Auth::id())->findOrFail($id);
         $direction = $request->input('direction'); // 'up' or 'down'
         $isTabungan = $alokasi->is_tabungan;
 
         // Ambil semua alokasi dengan tipe yang sama diurutkan berdasarkan sort_order
-        $items = Alokasi::where('is_tabungan', $isTabungan)
+        $items = Alokasi::where('user_id', Auth::id())
+            ->where('is_tabungan', $isTabungan)
             ->orderBy('sort_order', 'asc')
             ->orderBy('created_at', 'asc')
             ->get();
@@ -175,7 +179,8 @@ class AlokasiController extends Controller
             }
 
             // Normalisasi urutan agar tersusun rapi dari 0, 1, 2, ...
-            $items = Alokasi::where('is_tabungan', $isTabungan)
+            $items = Alokasi::where('user_id', Auth::id())
+                ->where('is_tabungan', $isTabungan)
                 ->orderBy('sort_order', 'asc')
                 ->orderBy('created_at', 'asc')
                 ->get();

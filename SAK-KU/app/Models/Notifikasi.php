@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Alokasi;
 
 class Notifikasi extends Model
@@ -14,12 +15,18 @@ class Notifikasi extends Model
     protected $table = 'notifications';
 
     protected $fillable = [
+        'user_id',
         'reference_id',
         'title',
         'message',
         'type',
         'is_read'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     protected $casts = [
         'is_read' => 'boolean',
@@ -30,7 +37,10 @@ class Notifikasi extends Model
      */
     public static function generateProgressNotifications()
     {
-        $semuaAlokasi = Alokasi::with('transaksi')->get();
+        $userId = Auth::id();
+        if (!$userId) return;
+
+        $semuaAlokasi = Alokasi::with('transaksi')->where('user_id', $userId)->get();
 
         foreach ($semuaAlokasi as $alokasi) {
             // Hitung uang masuk dan keluar
@@ -42,7 +52,7 @@ class Notifikasi extends Model
                 if ($alokasi->target_nominal > 0 && $pemasukan >= $alokasi->target_nominal) {
                     $refId = "tabungan_success_" . $alokasi->id;
                     self::firstOrCreate(
-                        ['reference_id' => $refId],
+                        ['reference_id' => $refId, 'user_id' => $userId],
                         [
                             'title'   => 'Tabungan Tercapai! 🎉',
                             'message' => "Selamat! Target tabungan '{$alokasi->nama}' sebesar Rp " . number_format($alokasi->target_nominal, 0, ',', '.') . " telah tercapai.",
@@ -58,7 +68,7 @@ class Notifikasi extends Model
                     if ($persentaseTerpakai >= 90 && $persentaseTerpakai < 100) {
                         $refId = "kantong_warning_" . $alokasi->id;
                         self::firstOrCreate(
-                            ['reference_id' => $refId],
+                            ['reference_id' => $refId, 'user_id' => $userId],
                             [
                                 'title'   => 'Peringatan Kantong!',
                                 'message' => "Pengeluaran untuk '{$alokasi->nama}' sudah mencapai " . round($persentaseTerpakai) . "% dari batas budget.",
@@ -68,7 +78,7 @@ class Notifikasi extends Model
                     } elseif ($persentaseTerpakai >= 100) {
                         $refId = "kantong_overbudget_" . $alokasi->id;
                         self::firstOrCreate(
-                            ['reference_id' => $refId],
+                            ['reference_id' => $refId, 'user_id' => $userId],
                             [
                                 'title'   => 'Kantong Jebol! 🚨',
                                 'message' => "Pengeluaran '{$alokasi->nama}' telah melebihi batas budget yang ditentukan!",

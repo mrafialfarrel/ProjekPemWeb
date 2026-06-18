@@ -20,6 +20,7 @@ class Transaksi extends Model
         'is_pemasukan',
         'kategori',
         'alokasi_id',
+        'user_id',
         'tanggal'
     ];
 
@@ -35,5 +36,13 @@ class Transaksi extends Model
     public function alokasi()
     {
         return $this->belongsTo(Alokasi::class, 'alokasi_id');
+    }
+
+    /**
+     * Relasi ke User (Satu Transaksi dimiliki oleh satu User)
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

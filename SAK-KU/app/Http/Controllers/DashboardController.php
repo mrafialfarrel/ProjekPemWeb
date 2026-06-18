@@ -6,6 +6,7 @@ use App\Models\Transaksi;
 use App\Models\Notifikasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -14,7 +15,7 @@ class DashboardController extends Controller
     {
         // === LOGIKA DASHBOARD ===
         // 1. Ambil seluruh transaksi untuk menghitung total
-        $semuaTransaksi = Transaksi::all();
+        $semuaTransaksi = Transaksi::where('user_id', Auth::id())->get();
 
         $totalPemasukan = $semuaTransaksi->where('is_pemasukan', true)->sum('nominal');
         $totalPengeluaran = $semuaTransaksi->where('is_pemasukan', false)->sum('nominal');
@@ -22,6 +23,7 @@ class DashboardController extends Controller
 
         // 2. Ambil 5 transaksi terbaru
         $recentTransactions = Transaksi::with('alokasi')
+            ->where('user_id', Auth::id())
             ->orderBy('tanggal', 'desc')
             ->take(5)
             ->get();
@@ -31,8 +33,10 @@ class DashboardController extends Controller
         $isNotificationEnabled = request()->cookie('notification_enabled', true);
 
         // 4. Proses dan Ambil data Notifikasi
-        Notifikasi::generateProgressNotifications();
-        $notifikasi = Notifikasi::orderBy('created_at', 'desc')->get();
+        if (Auth::check()) {
+            Notifikasi::generateProgressNotifications();
+        }
+        $notifikasi = Notifikasi::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
         $unreadNotificationsCount = $notifikasi->where('is_read', false)->count();
 
 
@@ -44,7 +48,8 @@ class DashboardController extends Controller
         $timeLimit = $this->getTimeLimit($selectedFilter);
 
         // 3. Filter transaksi berdasarkan waktu
-        $filteredTransactions = Transaksi::where('tanggal', '>=', $timeLimit)->get();
+        $filteredTransactions = Transaksi::where('user_id', Auth::id())
+            ->where('tanggal', '>=', $timeLimit)->get();
 
         // 4. Pisahkan Pemasukan dan Pengeluaran periode laporan
         $incomes = $filteredTransactions->where('is_pemasukan', true);

@@ -21,7 +21,8 @@ class ExportController extends Controller
         $timeLimit = $this->getTimeLimit($rentang);
 
         // Ambil data dari database (Diurutkan dari terbaru, sesuai logika Kotlin)
-        $transactions = Transaksi::where('tanggal', '>=', $timeLimit)
+        $transactions = Transaksi::where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->where('tanggal', '>=', $timeLimit)
             ->orderBy('tanggal', 'desc')
             ->get();
 

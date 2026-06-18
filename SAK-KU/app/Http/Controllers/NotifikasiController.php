@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Notifikasi;
 use App\Models\Alokasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NotifikasiController extends Controller
 {
@@ -22,7 +23,7 @@ class NotifikasiController extends Controller
      */
     public function markAsRead($id)
     {
-        $notif = Notifikasi::findOrFail($id);
+        $notif = Notifikasi::where('user_id', Auth::id())->findOrFail($id);
         $notif->update(['is_read' => true]);
 
         return back();
@@ -33,7 +34,7 @@ class NotifikasiController extends Controller
      */
     public function markAllAsRead()
     {
-        Notifikasi::where('is_read', false)->update(['is_read' => true]);
+        Notifikasi::where('user_id', Auth::id())->where('is_read', false)->update(['is_read' => true]);
         return back();
     }
 

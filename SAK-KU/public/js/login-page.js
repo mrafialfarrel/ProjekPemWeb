@@ -131,10 +131,41 @@ btnSubmitSignIn.addEventListener('click', (e) => {
     }
 
     if (isValid) {
-        Auth.login('authenticated');
-        const urlParams = new URLSearchParams(window.location.search);
-        const returnUrl = urlParams.get('returnUrl') || '/dashboard';
-        window.location.href = returnUrl;
+        const btn = btnSubmitSignIn;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Memproses...';
+        btn.disabled = true;
+
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                email: emailValue,
+                password: passwordValue
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const returnUrl = urlParams.get('returnUrl') || '/dashboard';
+                window.location.href = returnUrl;
+            } else {
+                showError(loginPassword, data.error || 'Terjadi kesalahan. Silakan coba lagi.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError(loginPassword, 'Terjadi kesalahan jaringan.');
+        })
+        .finally(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
     }
 });
 
@@ -175,10 +206,44 @@ btnSubmitSignUp.addEventListener('click', (e) => {
     }
 
     if (isValid) {
-        Auth.login('authenticated');
-        const urlParams = new URLSearchParams(window.location.search);
-        const returnUrl = urlParams.get('returnUrl') || '/dashboard';
-        window.location.href = returnUrl;
+        const btn = btnSubmitSignUp;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Memproses...';
+        btn.disabled = true;
+
+        fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: nameValue,
+                email: emailValue,
+                password: passwordValue
+            })
+        })
+        .then(async response => {
+            const data = await response.json();
+            if (response.ok && data.success) {
+                window.location.href = '/email/verify';
+            } else {
+                if (data.errors && data.errors.email) {
+                    showError(regEmail, data.errors.email[0]);
+                } else {
+                    showError(regPassword, data.message || 'Terjadi kesalahan saat registrasi.');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError(regPassword, 'Terjadi kesalahan jaringan.');
+        })
+        .finally(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
     }
 });
 

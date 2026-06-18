@@ -18,7 +18,8 @@ class Alokasi extends Model
         'nama', 
         'target_nominal', 
         'is_tabungan',
-        'sort_order'
+        'sort_order',
+        'user_id'
     ];
 
     // Opsional: Memastikan is_tabungan dibaca sebagai boolean
@@ -33,6 +34,12 @@ class Alokasi extends Model
     {
         return $this->hasMany(Transaksi::class, 'alokasi_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     /**
      * ACCESSOR SALDO: Menghitung saldo secara dinamis dari relasi transaksi
      * Rumus: Pemasukan (masuk) - Pengeluaran (keluar)

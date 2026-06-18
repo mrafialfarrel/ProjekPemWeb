@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaksi;
 use App\Models\Alokasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TransaksiController extends Controller
 {
@@ -37,6 +38,7 @@ class TransaksiController extends Controller
             'is_pemasukan' => $isPemasukan,
             'kategori'     => $request->kategori ?? 'Umum',
             'tanggal'      => now(),
+            'user_id'      => Auth::id(),
         ]);
 
         return back()->with('success', 'Transaksi berhasil ditambahkan!');
@@ -47,7 +49,7 @@ class TransaksiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $transaksi = Transaksi::findOrFail($id);
+        $transaksi = Transaksi::where('user_id', Auth::id())->findOrFail($id);
 
         $isPemasukan = $transaksi->is_pemasukan;
         if ($request->has('jenis')) {
@@ -74,7 +76,7 @@ class TransaksiController extends Controller
      */
     public function destroy($id)
     {
-        $transaksi = Transaksi::findOrFail($id);
+        $transaksi = Transaksi::where('user_id', Auth::id())->findOrFail($id);
         $transaksi->delete();
 
         return back()->with('success', 'Transaksi berhasil dihapus!');

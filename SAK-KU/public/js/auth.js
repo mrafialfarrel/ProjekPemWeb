@@ -1,21 +1,26 @@
 class Auth {
     static getRole() {
-        return localStorage.getItem('sakku-role') || 'guest';
+        return window.isGuest ? 'guest' : 'authenticated';
     }
 
     static isGuest() {
-        return this.getRole() === 'guest';
+        return window.isGuest === true;
     }
 
-    static login(role = 'authenticated') {
-        localStorage.setItem('sakku-role', role);
-        document.cookie = `sakku-role=${role}; path=/`;
-    }
-
-    static logout() {
-        localStorage.removeItem('sakku-role');
-        document.cookie = `sakku-role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-        window.location.href = '/dashboard';
+    static async logout() {
+        try {
+            await fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            });
+            window.location.href = '/dashboard';
+        } catch (error) {
+            console.error('Logout failed', error);
+            window.location.href = '/dashboard';
+        }
     }
 
     static initGuestUI() {
