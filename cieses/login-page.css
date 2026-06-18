@@ -218,3 +218,19 @@ input:focus {
 .container.right-panel-active .overlay-left { transform: translateX(0); }
 .overlay-right { right: 0; transform: translateX(0); }
 .container.right-panel-active .overlay-right { transform: translateX(20%); }
+
+.validation-error {
+    color: #ff3860;
+    font-size: 11px;
+    margin: -4px 0 8px 0;
+    text-align: left;
+    align-self: flex-start;
+    width: 100%;
+    padding-left: 5px;
+    display: none;
+}
+
+.input-error {
+    border: 1px solid #ff3860 !important;
+    background-color: rgba(255, 56, 96, 0.05) !important;
+}

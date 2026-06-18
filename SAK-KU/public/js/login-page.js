@@ -65,25 +65,116 @@ prefersDarkScheme.addEventListener('change', (e) => {
  const regEmail = document.getElementById('regEmail');
  const regPassword = document.getElementById('regPassword');
 
- btnSubmitSignIn.addEventListener('click', (e) => {
-    e.preventDefault();
+function showError(inputElement, message) {
+    inputElement.classList.add('input-error');
+    let errorElement = inputElement.nextElementSibling;
+    if (!errorElement || !errorElement.classList.contains('validation-error')) {
+        errorElement = document.createElement('div');
+        errorElement.className = 'validation-error';
+        inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+    }
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
 
-    if (loginEmail.value.trim() === '' || loginPassword.value.trim() === ''){
-        alert('Ups! Email dan password akun kamu tidak boleh kosong.');
-    } else {
+function clearError(inputElement) {
+    inputElement.classList.remove('input-error');
+    const errorElement = inputElement.nextElementSibling;
+    if (errorElement && errorElement.classList.contains('validation-error')) {
+        errorElement.style.display = 'none';
+    }
+}
+
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function validatePasswordStrength(password) {
+    const errors = [];
+    if (password.length < 8) {
+        errors.push("Password minimal harus 8 karakter.");
+    }
+    if (!/[A-Z]/.test(password)) {
+        errors.push("Harus mengandung huruf kapital (A-Z).");
+    }
+    if (!/[a-z]/.test(password)) {
+        errors.push("Harus mengandung huruf kecil (a-z).");
+    }
+    if (!/[0-9]/.test(password)) {
+        errors.push("Harus mengandung angka (0-9).");
+    }
+    return errors;
+}
+
+btnSubmitSignIn.addEventListener('click', (e) => {
+    e.preventDefault();
+    let isValid = true;
+    
+    clearError(loginEmail);
+    clearError(loginPassword);
+
+    const emailValue = loginEmail.value.trim();
+    const passwordValue = loginPassword.value.trim();
+
+    if (emailValue === '') {
+        showError(loginEmail, 'Email tidak boleh kosong.');
+        isValid = false;
+    } else if (!validateEmail(emailValue)) {
+        showError(loginEmail, 'Format email tidak valid (contoh: nama@domain.com).');
+        isValid = false;
+    }
+
+    if (passwordValue === '') {
+        showError(loginPassword, 'Password tidak boleh kosong.');
+        isValid = false;
+    }
+
+    if (isValid) {
         window.location.href = '/dashboard';
     }
- });
+});
 
- btnSubmitSignUp.addEventListener('click', (e) => {
+btnSubmitSignUp.addEventListener('click', (e) => {
     e.preventDefault();
+    let isValid = true;
 
-    if (regName.value.trim() === '' || regEmail.value.trim() === '' || regPassword.value.trim() === ''){
-        alert('Mohon lengkapi Nama, Email, dan Password untuk mulai mencatat keuanganmu');
-    } else {
-        window.location.href ='/dashboard';
+    clearError(regName);
+    clearError(regEmail);
+    clearError(regPassword);
+
+    const nameValue = regName.value.trim();
+    const emailValue = regEmail.value.trim();
+    const passwordValue = regPassword.value.trim();
+
+    if (nameValue === '') {
+        showError(regName, 'Nama panggilan tidak boleh kosong.');
+        isValid = false;
     }
- });
+
+    if (emailValue === '') {
+        showError(regEmail, 'Email tidak boleh kosong.');
+        isValid = false;
+    } else if (!validateEmail(emailValue)) {
+        showError(regEmail, 'Format email tidak valid (contoh: nama@domain.com).');
+        isValid = false;
+    }
+
+    if (passwordValue === '') {
+        showError(regPassword, 'Password tidak boleh kosong.');
+        isValid = false;
+    } else {
+        const passwordErrors = validatePasswordStrength(passwordValue);
+        if (passwordErrors.length > 0) {
+            showError(regPassword, passwordErrors.join(' '));
+            isValid = false;
+        }
+    }
+
+    if (isValid) {
+        window.location.href = '/dashboard';
+    }
+});
 
 function triggerSubmitOnEnter(inputElement, buttonElement) {
     inputElement.addEventListener('keypress', function(event) {
@@ -100,3 +191,11 @@ triggerSubmitOnEnter(loginPassword, btnSubmitSignIn);
 triggerSubmitOnEnter(regName, btnSubmitSignUp);
 triggerSubmitOnEnter(regEmail, btnSubmitSignUp);
 triggerSubmitOnEnter(regPassword, btnSubmitSignUp);
+
+[loginEmail, loginPassword, regName, regEmail, regPassword].forEach(input => {
+    if (input) {
+        input.addEventListener('input', () => {
+            clearError(input);
+        });
+    }
+});
