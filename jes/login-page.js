@@ -36,11 +36,11 @@ updateToggleButton();
 
 themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
-    
+
     let currentTheme = document.body.classList.contains('dark-mode') ? "dark" : "light";
-    
+
     localStorage.setItem("sakku-theme", currentTheme);
-    
+
     updateToggleButton();
 });
 
@@ -55,15 +55,15 @@ prefersDarkScheme.addEventListener('change', (e) => {
     }
 });
 
- const btnSubmitSignIn = document.getElementById('btnSubmitSignIn');
- const btnSubmitSignUp = document.getElementById('btnSubmitSignUp');
- 
- const loginEmail = document.getElementById('loginEmail');
- const loginPassword = document.getElementById('loginPassword');
+const btnSubmitSignIn = document.getElementById('btnSubmitSignIn');
+const btnSubmitSignUp = document.getElementById('btnSubmitSignUp');
 
- const regName = document.getElementById('regName');
- const regEmail = document.getElementById('regEmail');
- const regPassword = document.getElementById('regPassword');
+const loginEmail = document.getElementById('loginEmail');
+const loginPassword = document.getElementById('loginPassword');
+
+const regName = document.getElementById('regName');
+const regEmail = document.getElementById('regEmail');
+const regPassword = document.getElementById('regPassword');
 
 function showError(inputElement, message) {
     inputElement.classList.add('input-error');
@@ -110,7 +110,7 @@ function validatePasswordStrength(password) {
 btnSubmitSignIn.addEventListener('click', (e) => {
     e.preventDefault();
     let isValid = true;
-    
+
     clearError(loginEmail);
     clearError(loginPassword);
 
@@ -177,9 +177,9 @@ btnSubmitSignUp.addEventListener('click', (e) => {
 });
 
 function triggerSubmitOnEnter(inputElement, buttonElement) {
-    inputElement.addEventListener('keypress', function(event) {
+    inputElement.addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {
-            event.preventDefault(); 
+            event.preventDefault();
             buttonElement.click();
         }
     });

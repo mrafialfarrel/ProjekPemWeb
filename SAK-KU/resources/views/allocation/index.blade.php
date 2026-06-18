@@ -65,14 +65,14 @@
                                         <div class="pocket-number" style="width: auto; gap: 5px; flex-shrink: 0; display: flex; align-items: center;">
                                             {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                                             <div style="display: flex; flex-direction: column; align-items: center; margin-left: 2px;">
-                                                <form action="{{ url('/kantong/' . $k->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();">
+                                                <form action="{{ url('/kantong/' . $k->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();" onsubmit="if(!Auth.checkAccess(null, event)) return false;">
                                                     @csrf
                                                     <input type="hidden" name="direction" value="up">
                                                     <button type="submit" style="background: none; border: none; padding: 0; margin: 0; color: var(--text-secondary); cursor: pointer;" title="Pindahkan Ke Atas">
                                                         <i data-feather="chevron-up" style="width: 14px; height: 14px;"></i>
                                                     </button>
                                                 </form>
-                                                <form action="{{ url('/kantong/' . $k->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();">
+                                                <form action="{{ url('/kantong/' . $k->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();" onsubmit="if(!Auth.checkAccess(null, event)) return false;">
                                                     @csrf
                                                     <input type="hidden" name="direction" value="down">
                                                     <button type="submit" style="background: none; border: none; padding: 0; margin: 0; color: var(--text-secondary); cursor: pointer;" title="Pindahkan Ke Bawah">
@@ -122,7 +122,7 @@
                         @endif
                     @endif
 
-                    <button class="section-action-btn" onclick="openBottomSheet('Kantong')">
+                    <button class="section-action-btn" onclick="Auth.checkAccess(() => openBottomSheet('Kantong'), event)">
                         <i data-feather="plus" width="16" height="16" style="margin-right: 5px;"></i> Tambah Kantong Baru
                     </button>
                 </section>
@@ -144,14 +144,14 @@
                                     <div class="pocket-number" style="width: auto; gap: 5px; flex-shrink: 0; display: flex; align-items: center;">
                                         {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                                         <div style="display: flex; flex-direction: column; align-items: center; margin-left: 2px;">
-                                            <form action="{{ url('/kantong/' . $t->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();">
+                                            <form action="{{ url('/kantong/' . $t->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();" onsubmit="if(!Auth.checkAccess(null, event)) return false;">
                                                 @csrf
                                                 <input type="hidden" name="direction" value="up">
                                                 <button type="submit" style="background: none; border: none; padding: 0; margin: 0; color: var(--text-secondary); cursor: pointer;" title="Pindahkan Ke Atas">
                                                     <i data-feather="chevron-up" style="width: 14px; height: 14px;"></i>
                                                 </button>
                                             </form>
-                                            <form action="{{ url('/kantong/' . $t->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();">
+                                            <form action="{{ url('/kantong/' . $t->id . '/move') }}" method="POST" style="margin: 0; line-height: 0;" onclick="event.stopPropagation();" onsubmit="if(!Auth.checkAccess(null, event)) return false;">
                                                 @csrf
                                                 <input type="hidden" name="direction" value="down">
                                                 <button type="submit" style="background: none; border: none; padding: 0; margin: 0; color: var(--text-secondary); cursor: pointer;" title="Pindahkan Ke Bawah">
@@ -192,7 +192,7 @@
                         @endif
                     @endif
 
-                    <button class="section-action-btn" onclick="openBottomSheet('Tabungan')">
+                    <button class="section-action-btn" onclick="Auth.checkAccess(() => openBottomSheet('Tabungan'), event)">
                         <i data-feather="plus" width="16" height="16" style="margin-right: 5px;"></i> Tambah Tabungan Baru
                     </button>
                 </section>
@@ -226,12 +226,12 @@
                                 
                                 <div class="history-actions" style="margin-top: 10px;">
                                     {{-- Edit Transaction Button --}}
-                                    <button class="trx-action-btn edit" onclick="event.stopPropagation(); editTransaksi('{{ $t->id }}', '{{ $t->keterangan }}', '{{ $t->nominal }}', '{{ $t->is_pemasukan ? 1 : 0 }}', '{{ $t->kategori }}', '{{ $t->alokasi_id }}')" title="Edit Transaksi">
+                                    <button class="trx-action-btn edit" onclick="event.stopPropagation(); Auth.checkAccess(() => editTransaksi('{{ $t->id }}', '{{ $t->keterangan }}', '{{ $t->nominal }}', '{{ $t->is_pemasukan ? 1 : 0 }}', '{{ $t->kategori }}', '{{ $t->alokasi_id }}'), event)" title="Edit Transaksi">
                                         <i data-feather="edit-2"></i>
                                     </button>
                                     
                                     {{-- Delete Transaction Form --}}
-                                    <form action="{{ url('/transaksi/' . $t->id) }}" method="POST" onsubmit="return confirm('Apakah kamu yakin ingin menghapus transaksi ini?');" style="display: inline;">
+                                    <form action="{{ url('/transaksi/' . $t->id) }}" method="POST" onsubmit="if(!Auth.checkAccess(null, event)) return false; return confirm('Apakah kamu yakin ingin menghapus transaksi ini?');" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="trx-action-btn delete" title="Hapus Transaksi">
@@ -251,7 +251,7 @@
 
     <!-- FAB Button (on mobile, triggers add transaction) -->
     <div class="fab-container">
-        <button class="fab-btn" onclick="openBottomSheet('Transaksi')" title="Tambah Transaksi">
+        <button class="fab-btn" onclick="Auth.checkAccess(() => openBottomSheet('Transaksi'), event)" title="Tambah Transaksi">
             <i data-feather="plus"></i>
         </button>
     </div>
@@ -270,7 +270,7 @@
         <div class="sheet-content">
             <!-- Form Transaksi (Tambah/Edit) -->
             <div id="formTransaksi" style="display: none;">
-                <form id="transaksiSubmitForm" action="{{ url('/transaksi') }}" method="POST">
+                <form id="transaksiSubmitForm" action="{{ url('/transaksi') }}" method="POST" onsubmit="if(!Auth.checkAccess(null, event)) return false;">
                     @csrf
                     <input type="hidden" name="_method" id="transaksiFormMethod" value="POST">
                     
@@ -316,7 +316,7 @@
 
             <!-- Form Alokasi Baru (Tambah) -->
             <div id="formAlokasi" style="display: none;">
-                <form action="{{ url('/kantong') }}" method="POST">
+                <form action="{{ url('/kantong') }}" method="POST" onsubmit="if(!Auth.checkAccess(null, event)) return false;">
                     @csrf
                     
                     <div class="radio-group" style="display: flex; gap: 30px; margin-bottom: 20px; font-size: 16px;">
@@ -344,7 +344,7 @@
 
             <!-- Form Detail / Edit / Delete Kantong/Tabungan -->
             <div id="formDetail" style="display: none;">
-                <form id="formEditKantong" action="" method="POST">
+                <form id="formEditKantong" action="" method="POST" onsubmit="if(!Auth.checkAccess(null, event)) return false;">
                     @csrf
                     @method('PUT')
                     <div class="form-group">
@@ -360,7 +360,7 @@
                     <button type="submit" class="save-btn" style="margin-bottom: 10px;">Simpan Perubahan</button>
                 </form>
 
-                <form id="formDeleteKantong" action="" method="POST" onsubmit="return confirm('Apakah kamu yakin ingin menghapus alokasi ini? Histori transaksi alokasi ini akan tetap disimpan.')">
+                <form id="formDeleteKantong" action="" method="POST" onsubmit="if(!Auth.checkAccess(null, event)) return false; return confirm('Apakah kamu yakin ingin menghapus alokasi ini? Histori transaksi alokasi ini akan tetap disimpan.')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="save-btn" style="background: #e53935; margin-bottom: 25px;">Hapus Alokasi</button>

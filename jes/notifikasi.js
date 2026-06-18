@@ -6,7 +6,7 @@ function updateToggleButton() {
     } else {
         themeToggle.innerHTML = '<i data-feather="moon"></i>';
     }
-    feather.replace(); 
+    feather.replace();
 }
 
 const savedTheme = localStorage.getItem("sakku-theme");
@@ -24,10 +24,10 @@ updateToggleButton();
 
 themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
-    
+
     let currentTheme = document.body.classList.contains('dark-mode') ? "dark" : "light";
     localStorage.setItem("sakku-theme", currentTheme);
-    
+
     updateToggleButton();
 });
 
@@ -35,8 +35,8 @@ const btnLogout = document.getElementById('btnLogout');
 
 btnLogout.addEventListener('click', () => {
     const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari aplikasi sak-ku?");
-    
+
     if (konfirmasi) {
-        window.location.href = 'LoginPage.html'; 
+        window.location.href = 'LoginPage.html';
     }
 });

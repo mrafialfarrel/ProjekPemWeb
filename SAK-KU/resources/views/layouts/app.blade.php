@@ -16,6 +16,9 @@
     
     <!-- Page Specific CSS -->
     @stack('styles')
+    
+    <!-- Auth Security -->
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
 </head>
 <body class="{{ request()->cookie('theme_mode', 'light') === 'dark' ? 'dark-mode' : '' }}">
     <script>
@@ -35,6 +38,9 @@
     <script>
         feather.replace();
     </script>
+    
+    <!-- Auth Security JS -->
+    <script src="{{ asset('js/auth.js') }}"></script>
     
     <!-- Page Specific JavaScript -->
     @stack('scripts')

@@ -224,14 +224,3 @@ function toggleExpandList(type) {
     }
     feather.replace();
 }
-
-// Logout Confirmation
-const btnLogout = document.getElementById('btnLogout');
-if (btnLogout) {
-    btnLogout.addEventListener('click', () => {
-        const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari aplikasi sak-ku?");
-        if (konfirmasi) {
-            window.location.href = '/'; 
-        }
-    });
-}

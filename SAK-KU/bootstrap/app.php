@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: [
             'theme_mode',
+            'sakku-role',
+        ]);
+        $middleware->alias([
+            'not.guest' => \App\Http\Middleware\CheckGuestAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

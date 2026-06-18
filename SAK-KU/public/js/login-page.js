@@ -131,7 +131,10 @@ btnSubmitSignIn.addEventListener('click', (e) => {
     }
 
     if (isValid) {
-        window.location.href = '/dashboard';
+        Auth.login('authenticated');
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnUrl = urlParams.get('returnUrl') || '/dashboard';
+        window.location.href = returnUrl;
     }
 });
 
@@ -172,7 +175,10 @@ btnSubmitSignUp.addEventListener('click', (e) => {
     }
 
     if (isValid) {
-        window.location.href = '/dashboard';
+        Auth.login('authenticated');
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnUrl = urlParams.get('returnUrl') || '/dashboard';
+        window.location.href = returnUrl;
     }
 });
 
@@ -197,5 +203,12 @@ triggerSubmitOnEnter(regPassword, btnSubmitSignUp);
         input.addEventListener('input', () => {
             clearError(input);
         });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'register') {
+        container.classList.add("right-panel-active");
     }
 });

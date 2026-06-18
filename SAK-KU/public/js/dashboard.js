@@ -92,6 +92,7 @@ if (bellBtn && notificationDropdown) {
 // Mark single notification as read via AJAX
 if (notifDropdownBody) {
     notifDropdownBody.addEventListener('click', (e) => {
+        if (!Auth.checkAccess(null, e)) return;
         const item = e.target.closest('.notif-dropdown-item.unread');
         if (item) {
             e.stopPropagation();
@@ -135,6 +136,7 @@ if (notifDropdownBody) {
 // Mark all notifications as read via AJAX
 if (readAllNotifBtn) {
     readAllNotifBtn.addEventListener('click', (e) => {
+        if (!Auth.checkAccess(null, e)) return;
         e.stopPropagation();
         
         fetch('/notifikasi/read-all', {
@@ -166,13 +168,8 @@ function getCsrfTokenFromDom() {
     return csrfInput ? csrfInput.value : '';
 }
 
-// Logout Confirmation
-const btnLogout = document.getElementById('btnLogout');
-if (btnLogout) {
-    btnLogout.addEventListener('click', () => {
-        const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari aplikasi sak-ku?");
-        if (konfirmasi) {
-            window.location.href = '/'; 
-        }
-    });
+// Helper to get CSRF token if meta tag is not present
+function getCsrfTokenFromDom() {
+    const csrfInput = document.querySelector('input[name="_token"]');
+    return csrfInput ? csrfInput.value : '';
 }
