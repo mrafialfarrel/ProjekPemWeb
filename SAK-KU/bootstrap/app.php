@@ -11,10 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // --- Tambahan untuk mengatasi Mixed Content (Proxy Render) ---
+        $middleware->trustProxies(at: '*');
+        // -------------------------------------------------------------
+
         $middleware->encryptCookies(except: [
             'theme_mode',
             'sakku-role',
         ]);
+        
         $middleware->alias([
             'not.guest' => \App\Http\Middleware\CheckGuestAccess::class,
         ]);
