@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -76,4 +77,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Notifikasi Write
     Route::patch('/notifikasi/{id}/read', [NotifikasiController::class, 'markAsRead']);
     Route::post('/notifikasi/read-all', [NotifikasiController::class, 'markAllAsRead']);
+});
+
+Route::get('/clear-cache-rahasia', function() {
+    Artisan::call('optimize:clear');
+    return 'Cache server berhasil dibersihkan!';
 });
