@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class AlokasiController extends Controller
 {
     /**
-     * Menampilkan halaman Kantong & Tabungan 
+     * Menampilkan halaman Kantong dan Tabungan 
      * (Mengadaptasi logika dari 'savings' dan 'pockets' StateFlow)
      */
     public function index()
@@ -181,8 +181,11 @@ class AlokasiController extends Controller
             // Normalisasi urutan agar tersusun rapi dari 0, 1, 2, ...
             $items = Alokasi::where('user_id', Auth::id())
                 ->where('is_tabungan', $isTabungan)
+
                 ->orderBy('sort_order', 'asc')
+                
                 ->orderBy('created_at', 'asc')
+                
                 ->get();
             foreach ($items as $idx => $item) {
                 $item->sort_order = $idx;
